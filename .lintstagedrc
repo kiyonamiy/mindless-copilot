@@ -1,0 +1,6 @@
+{
+  "*.{js,jsx,ts,tsx}": [
+    "pnpm exec eslint",
+    "pnpm exec prettier --write --ignore-unknown"
+  ]
+}
