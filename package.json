@@ -6,6 +6,11 @@
   "bin": {
     "dirmanager": "./dist/index.js"
   },
+  "files": [
+    "dist",
+    "package.json",
+    "README.md"
+  ],
   "scripts": {
     "dev": "npx nodemon",
     "build": "rimraf ./dist && tsc",

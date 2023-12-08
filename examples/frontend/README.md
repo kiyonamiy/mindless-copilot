@@ -1,0 +1,1 @@
+- 使用 `pnpm link ../../`，将 `mindless-copilot` 链接到当前项目中；
