@@ -1,7 +1,9 @@
 ## 命令
 
+### 本地测试（开发过程）
+
 ```typescript
-npx ts-node -r tsconfig-paths/register ./src/index.ts generate -t frontend
+npx ts-node -r tsconfig-paths/register ./src/index.ts generate -t backend --dir ../energy-hx-backend
 ```
 
 ## 项目开发过程

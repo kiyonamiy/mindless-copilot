@@ -13,8 +13,8 @@ export default function generate(options: {
       ? path.resolve(process.cwd(), options.dir)
       : process.cwd(); // 项目路径
 
+  const tables = loadTables(path.resolve(projectRootDir, 'sql/sql.json'));
   if (options.template === 'frontend') {
-    const tables = loadTables();
     // 通用文件夹创建
     const pagesRootDir = path.resolve(projectRootDir, './src/pages');
     const typesRootDir = path.resolve(projectRootDir, './src/types');
@@ -29,20 +29,14 @@ export default function generate(options: {
         .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
         .join('');
       mkdirSafely(path.resolve(pagesRootDir, `${moduleName}/hooks`));
-      // 再创建所有需要的文件
-      {
-        // 创建 /pages/{moduleName}/hooks/table-columns.tsx
-        // 读取模板
-        const templateContent = fs.readFileSync(
-          path.resolve(
-            __dirname,
-            '../../../templates/pages/table-page/hooks/table-columns.tsx.hbs',
-          ),
-          'utf-8',
-        );
-        // 模板与变量进行组合
-        const templateDelegate = Handlebars.compile(templateContent);
-        const compiledContent = templateDelegate({
+      // 创建 /pages/{moduleName}/hooks/table-columns.tsx
+      generateCodeByTemplate(
+        path.resolve(
+          __dirname,
+          '../../../templates/frontend/pages/table-page/hooks/table-columns.tsx.hbs',
+        ),
+        path.resolve(pagesRootDir, `${moduleName}/hooks/table-columns.tsx`),
+        {
           moduleName,
           typeName,
           columns: table.columns.map((column) => {
@@ -51,66 +45,39 @@ export default function generate(options: {
               dataIndex: column.name,
             };
           }),
-        });
-        // 写入文件
-        fs.writeFileSync(
-          path.resolve(pagesRootDir, `${moduleName}/hooks/table-columns.tsx`),
-          compiledContent,
-        );
-      }
-      {
-        // 创建 /pages/{moduleName}/index.less
-        // 读取模板
-        const templateContent = fs.readFileSync(
-          path.resolve(
-            __dirname,
-            '../../../templates/pages/table-page/index.less.hbs',
-          ),
-          'utf-8',
-        );
-        // 模板与变量进行组合
-        const templateDelegate = Handlebars.compile(templateContent);
-        const compiledContent = templateDelegate({
+        },
+      );
+      // 创建 /pages/{moduleName}/index.less
+      generateCodeByTemplate(
+        path.resolve(
+          __dirname,
+          '../../../templates/frontend/pages/table-page/index.less.hbs',
+        ),
+        path.resolve(pagesRootDir, `${moduleName}/index.less`),
+        {
           moduleName,
-        });
-        // 写入文件
-        fs.writeFileSync(
-          path.resolve(pagesRootDir, `${moduleName}/index.less`),
-          compiledContent,
-        );
-      }
-      {
-        // 创建 /pages/{moduleName}/index.ts
-        // 读取模板
-        const templateContent = fs.readFileSync(
-          path.resolve(
-            __dirname,
-            '../../../templates/pages/table-page/index.tsx.hbs',
-          ),
-          'utf-8',
-        );
-        // 模板与变量进行组合
-        const templateDelegate = Handlebars.compile(templateContent);
-        const compiledContent = templateDelegate({
+        },
+      );
+      // 创建 /pages/{moduleName}/index.ts
+      generateCodeByTemplate(
+        path.resolve(
+          __dirname,
+          '../../../templates/frontend/pages/table-page/index.tsx.hbs',
+        ),
+        path.resolve(pagesRootDir, `${moduleName}/index.tsx`),
+        {
           moduleName,
           typeName,
-        });
-        // 写入文件
-        fs.writeFileSync(
-          path.resolve(pagesRootDir, `${moduleName}/index.tsx`),
-          compiledContent,
-        );
-      }
-      {
-        // 创建 /types/{moduleName}.ts
-        // 读取模板
-        const templateContent = fs.readFileSync(
-          path.resolve(__dirname, '../../../templates/types/index.ts.hbs'),
-          'utf-8',
-        );
-        // 模板与变量进行组合
-        const templateDelegate = Handlebars.compile(templateContent);
-        const compiledContent = templateDelegate({
+        },
+      );
+      // 创建 /types/{moduleName}.ts
+      generateCodeByTemplate(
+        path.resolve(
+          __dirname,
+          '../../../templates/frontend/types/index.ts.hbs',
+        ),
+        path.resolve(typesRootDir, `${moduleName}.ts`),
+        {
           typeName,
           columns: table.columns.map((column) => {
             return {
@@ -118,41 +85,61 @@ export default function generate(options: {
               type: ColumnTypeEnum[column.type].jsMapping,
             };
           }),
-        });
-        // 写入文件
-        fs.writeFileSync(
-          path.resolve(typesRootDir, `${moduleName}.ts`),
-          compiledContent,
-        );
-      }
+        },
+      );
     });
-
-    // const templateContent = fs.readFileSync(
-    //   path.resolve(__dirname, '../templates/template.hbs'),
-    //   'utf-8',
-    // );
-    // const template = Handlebars.compile(templateContent);
-    // console.log(
-    //   template({
-    //     componentName: 'MyComponent',
-    //   }),
-    // );
   }
 
   if (options.template === 'backend') {
-    // TODO
+    // 以 XxxApplication.java 所在的文件夹为“生成代码”的根路径
+    const targetDir = findDirContainingFile(
+      path.resolve(projectRootDir, 'src/main/java'),
+      /Application\.java$/,
+    );
+    if (targetDir == null) {
+      // TODO 报错提示
+      return;
+    }
+    tables.forEach((table) => {
+      const tableNameSegments = table.name.split('_');
+      const typeName = tableNameSegments
+        .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+        .join('');
+      // const rootPackageName = path
+      //   .relative(path.resolve(projectRootDir, 'src/main/java'), targetDir)
+      //   .split('/')
+      //   .join('.');
+      const dataobjectDir = path.resolve(targetDir, 'domain/dataobject');
+      mkdirSafely(dataobjectDir);
+      // 创建 {targetDir}/domain/dataobject/{XxxDo}.java
+      generateCodeByTemplate(
+        path.resolve(
+          __dirname,
+          '../../../templates/backend/domain/dataobject/DO.java.hbs',
+        ),
+        path.resolve(dataobjectDir, `${typeName}DO.java`),
+        {
+          typeName,
+          columns: table.columns.map(({ comment, name, type }) => {
+            return {
+              comment,
+              name,
+              type: ColumnTypeEnum[type].javaMapping,
+            };
+          }),
+        },
+      );
+    });
   }
 
-  // TODO 没输入 template 则报错
+  // TODO 处理 没输入 template 则报错
 }
 
 /**
  * 从指定文件夹中读取并解析出 tables
  * @returns
  */
-function loadTables(): Table[] {
-  const currentWorkingDir = process.cwd(); // 当前执行命令的目录
-  const sqlFilepath = path.resolve(currentWorkingDir, 'sql/sql.json'); // TODO 也可以从命令行读取
+function loadTables(sqlFilepath: string): Table[] {
   const sqlJson = fs.readFileSync(sqlFilepath, 'utf-8');
   const tables = JSON.parse(sqlJson) as Table[];
   return tables;
@@ -177,4 +164,55 @@ function mkdirSafely(dirPath: string): void {
 
 function isErrnoException(err: unknown): err is NodeJS.ErrnoException {
   return (err as NodeJS.ErrnoException)?.code !== undefined;
+}
+
+/**
+ * 根据模板和数据生成代码，并写入文件
+ * @param templatePath 模板文件的绝对路径
+ * @param outputPath 输出文件的绝对路径
+ * @param data 模板所需的数据
+ */
+function generateCodeByTemplate(
+  templatePath: string,
+  outputPath: string,
+  data: Record<string, unknown>,
+) {
+  // 读取模板
+  const templateContent = fs.readFileSync(templatePath, 'utf-8');
+  // 模板与变量进行组合
+  const templateDelegate = Handlebars.compile(templateContent);
+  const compiledContent = templateDelegate(data);
+  // 写入文件
+  fs.writeFileSync(outputPath, compiledContent);
+}
+
+/**
+ * 查找包含“指定文件”的文件夹
+ * @param directory 寻找起点
+ * @param fileName 所要寻找的文件名
+ */
+
+function findDirContainingFile(
+  directory: string,
+  regex: RegExp,
+): string | null {
+  const files = fs.readdirSync(directory);
+
+  for (const file of files) {
+    const filePath = path.join(directory, file);
+    const stats = fs.statSync(filePath);
+
+    if (stats.isDirectory()) {
+      // 如果是目录，则递归调用
+      const foundFolder = findDirContainingFile(filePath, regex);
+      if (foundFolder) {
+        return foundFolder; // 如果在子目录中找到了包含指定文件的文件夹，直接返回
+      }
+    } else if (stats.isFile() && regex.test(file)) {
+      // 如果是文件，并且文件名匹配正则表达式，则返回包含该文件的文件夹路径
+      return directory;
+    }
+  }
+
+  return null; // 如果没有找到匹配文件，返回 null
 }

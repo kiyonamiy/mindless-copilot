@@ -1,0 +1,21 @@
+package com.hyperchain.cb.domain.dataobject;
+
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+@EqualsAndHashCode(callSuper = true)
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@TableName(value = "{{tableName}}", autoResultMap = true)
+public class {{typeName}}DO extends BaseDO {
+    {{#each columns}}
+    /**
+     * {{this.comment}}
+     */
+    private {{this.type}} {{this.name}};
+    {{/each}}
+}
