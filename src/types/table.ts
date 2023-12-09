@@ -1,20 +1,6 @@
-type TableColumnType =
-  | 'INT'
-  | 'VARCHAR'
-  | 'CHAR'
-  | 'DATETIME'
-  | 'TIMESTAMP'
-  | 'DATE'
-  | 'BIT'
-  | 'FLOAT'
-  | 'DOUBLE'
-  | 'DECIMAL'
-  | 'BIGINT'
-  | 'TEXT'
-  | 'JSON'
-  | 'BLOB'
-  | 'BINARY'
-  | 'ENUM';
+import ColumnTypeEnum from '../constants/column-type';
+
+type TableColumnType = keyof typeof ColumnTypeEnum;
 
 // 表每列定义
 export interface TableColumn {

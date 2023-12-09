@@ -1,12 +1,12 @@
 import { TableColumnsType } from 'antd';
 import { useMemo } from 'react';
-import { SysDictType } from '../types';
+import SysDictTypeTest from '@/types/sys-dict-type-test';
 
 // import ActionGroup from '@/components/action-group';
 // import { UserStatusEnum } from '@/constants/user';
 
 export const useTableColumns = () => {
-  const columns: TableColumnsType<SysDictType> = useMemo(
+  const columns: TableColumnsType<SysDictTypeTest> = useMemo(
     () => [
       {
         title: '主键',

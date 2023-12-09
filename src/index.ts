@@ -2,8 +2,6 @@
 import { Command } from 'commander';
 import mindlessCopilot from './mindless-copilot';
 
-// console.log('hello world', process.argv);
-
 const program = new Command();
 program
   .version('1.0.0')
