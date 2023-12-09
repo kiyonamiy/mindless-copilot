@@ -1,5 +1,6 @@
 import { App as AntdApp, ConfigProvider, theme } from 'antd';
-import SysDictTypePage from './pages/sys-dict-type';
+// import SysDictTypePage from './pages/sys-dict-type';
+import SysDictTypePageTest from './pages/sys-dict-type-test';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient();
@@ -21,7 +22,7 @@ function App() {
         }}
       >
         <AntdApp>
-          <SysDictTypePage />
+          <SysDictTypePageTest />
         </AntdApp>
       </ConfigProvider>
     </QueryClientProvider>

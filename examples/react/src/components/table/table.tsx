@@ -24,7 +24,7 @@ interface TableProps<RecordType>
   }) => Promise<PageData<RecordType>>;
 }
 
-function Table<RecordType extends AnyObject & { id: number }>(
+function Table<RecordType extends AnyObject & { id: number | bigint }>(
   props: TableProps<RecordType>,
 ) {
   const { columns, requestKey, request, ...restProps } = props;

@@ -41,7 +41,7 @@ const ColumnTypeEnum = {
   },
   ['BIGINT']: {
     value: 'BIGINT',
-    jsMapping: 'bigint',
+    jsMapping: 'number', // TODO
   },
   ['TEXT']: {
     value: 'TEXT',

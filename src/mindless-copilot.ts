@@ -21,11 +21,10 @@ export default function mindlessCopilot(options: { code: boolean }) {
       const typeName = tableNameSegments
         .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
         .join('');
-      // TODO 处理文件创建失败的情况
       mkdirSafely(path.resolve(pagesRootDir, `${moduleName}/hooks`));
       // 再创建所有需要的文件
       {
-        // 创建 /pages/{ENTITY}/hooks/table-columns.tsx
+        // 创建 /pages/{moduleName}/hooks/table-columns.tsx
         // 读取模板
         const templateContent = fs.readFileSync(
           path.resolve(
@@ -53,7 +52,50 @@ export default function mindlessCopilot(options: { code: boolean }) {
         );
       }
       {
-        // 创建 /types/{ENTITY}.ts
+        // 创建 /pages/{moduleName}/index.less
+        // 读取模板
+        const templateContent = fs.readFileSync(
+          path.resolve(
+            __dirname,
+            '../templates/pages/table-page/index.less.hbs',
+          ),
+          'utf-8',
+        );
+        // 模板与变量进行组合
+        const templateDelegate = Handlebars.compile(templateContent);
+        const compiledContent = templateDelegate({
+          moduleName,
+        });
+        // 写入文件
+        fs.writeFileSync(
+          path.resolve(pagesRootDir, `${moduleName}/index.less`),
+          compiledContent,
+        );
+      }
+      {
+        // 创建 /pages/{moduleName}/index.ts
+        // 读取模板
+        const templateContent = fs.readFileSync(
+          path.resolve(
+            __dirname,
+            '../templates/pages/table-page/index.tsx.hbs',
+          ),
+          'utf-8',
+        );
+        // 模板与变量进行组合
+        const templateDelegate = Handlebars.compile(templateContent);
+        const compiledContent = templateDelegate({
+          moduleName,
+          typeName,
+        });
+        // 写入文件
+        fs.writeFileSync(
+          path.resolve(pagesRootDir, `${moduleName}/index.tsx`),
+          compiledContent,
+        );
+      }
+      {
+        // 创建 /types/{moduleName}.ts
         // 读取模板
         const templateContent = fs.readFileSync(
           path.resolve(__dirname, '../templates/types/index.ts.hbs'),

@@ -5,20 +5,20 @@ import Table from '@/components/table/table';
 
 import { useTableColumns } from './hooks/table-columns';
 import { PageData, PageParams } from '@/types/request';
-import {{typeName}} from '@/types/{{moduleName}}';
+import SysDictTypeTest from '@/types/sys-dict-type-test';
 
-export default function {{typeName}}Page() {
+export default function SysDictTypeTestPage() {
   const columns = useTableColumns();
 
   return (
-    <div className="{{moduleName}}-page">
+    <div className="sys-dict-type-test-page">
       <TableContextProvider>
         <div className="table-container">
           <Table
             columns={columns}
-            requestKey={['{{moduleName}}-page']}
+            requestKey={['sys-dict-type-test-page']}
             request={(params: PageParams) => {
-              return new Promise<PageData<{{typeName}}>>((resolve) => {
+              return new Promise<PageData<SysDictTypeTest>>((resolve) => {
                 setTimeout(() => {
                   resolve({
                     current: params.pageNo,
