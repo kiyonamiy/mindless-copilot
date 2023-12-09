@@ -4,13 +4,8 @@
   "description": "",
   "main": "dist/index.js",
   "bin": {
-    "dirmanager": "./dist/index.js"
+    "mc": "./dist/index.js"
   },
-  "files": [
-    "dist",
-    "package.json",
-    "README.md"
-  ],
   "scripts": {
     "dev": "npx nodemon",
     "build": "rimraf ./dist && tsc",
@@ -40,6 +35,7 @@
   },
   "dependencies": {
     "commander": "^11.1.0",
-    "figlet": "^1.7.0"
+    "figlet": "^1.7.0",
+    "handlebars": "^4.7.8"
   }
 }

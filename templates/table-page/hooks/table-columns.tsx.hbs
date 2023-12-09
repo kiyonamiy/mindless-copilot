@@ -1,0 +1,26 @@
+import { TableColumnsType } from 'antd';
+import { useMemo } from 'react';
+import { SysDictType } from '../types';
+
+// import ActionGroup from '@/components/action-group';
+// import { UserStatusEnum } from '@/constants/user';
+
+export const useTableColumns = () => {
+  const columns: TableColumnsType<SysDictType> = useMemo(
+    () => [
+      {{#each columns}}
+      {
+        title: '{{this.title}}',
+        dataIndex: '{{this.dataIndex}}',
+      },
+      {{/each}}
+      {
+        title: '操作',
+        fixed: 'right',
+      },
+    ],
+    [],
+  );
+
+  return columns;
+};
