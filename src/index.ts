@@ -1,19 +1,21 @@
 #! /usr/bin/env node
 import { Command } from 'commander';
-import mindlessCopilot from './mindless-copilot';
+import generateAction from '@/actions/generate';
 
 const program = new Command();
 program
-  .version('1.0.0')
-  .description('小组定制化代码生成')
-  // .option('-l, --ls  [value]', 'List directory contents')
-  // .option('-m, --mkdir <value>', 'Create a directory')
-  // .option('-t, --touch <value>', 'Create a file')
-  .option('-c, --code', 'Generate code')
-  .parse(process.argv);
+  .version('1.0.0', '-v, --version', 'output the current version')
+  .description('小组定制化代码生成');
+// // .option('-l, --ls  [value]', 'List directory contents')
+// // .option('-m, --mkdir <value>', 'Create a directory')
+// // .option('-t, --touch <value>', 'Create a file')
+// .option('-c, --code', 'Generate code')
+// .action(mindlessCopilot);
 
-const options = program.opts<{
-  code: boolean;
-}>(); // node build/index.js -l
+program
+  .command('generate')
+  .description('代码生成')
+  .option('-t, --template <value>', 'frontend or backend')
+  .action(generateAction);
 
-mindlessCopilot(options);
+program.parse(process.argv);

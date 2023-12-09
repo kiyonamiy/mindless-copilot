@@ -1,0 +1,37 @@
+[
+  {
+    "name": "sys_dict_type_test",
+    "comment": "字典类型",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT",
+        "comment": "主键",
+        "notNull": true,
+        "primaryKey": true,
+        "unsigned": true,
+        "autoIncrement": true
+      },
+      {
+        "name": "name",
+        "type": "VARCHAR",
+        "comment": "字典名称",
+        "length": 112,
+        "notNull": true
+      },
+      {
+        "name": "type",
+        "type": "VARCHAR",
+        "comment": "字典类型",
+        "length": 112,
+        "notNull": true
+      },
+      {
+        "name": "status",
+        "type": "INT",
+        "comment": "状态（启用 1、禁用 2）",
+        "notNull": true
+      }
+    ]
+  }
+]

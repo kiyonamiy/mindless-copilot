@@ -1,3 +1,9 @@
+## 命令
+
+```typescript
+npx ts-node -r tsconfig-paths/register ./src/index.ts generate -t frontend
+```
+
 ## 项目开发过程
 
 - 项目启动，参考 [How to Setup a TypeScript + Node.js Project](https://khalilstemmler.com/blogs/typescript/node-starter-project/)；
