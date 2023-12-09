@@ -16,6 +16,7 @@ program
   .command('generate')
   .description('代码生成')
   .option('-t, --template <value>', 'frontend or backend')
+  .option('-d, --dir <value>', '指定项目目录，默认是当前文件夹')
   .action(generateAction);
 
 program.parse(process.argv);

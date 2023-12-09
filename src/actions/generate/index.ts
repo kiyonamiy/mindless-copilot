@@ -4,15 +4,20 @@ import { Table } from '@/types/table';
 import Handlebars from 'handlebars';
 import ColumnTypeEnum from '@/constants/column-type';
 
-export default function mindlessCopilot(options: {
-  template: 'frontend' | 'backend' | string;
+export default function generate(options: {
+  template?: 'frontend' | 'backend' | string;
+  dir?: string;
 }) {
+  const projectRootDir =
+    options.dir != null
+      ? path.resolve(process.cwd(), options.dir)
+      : process.cwd(); // 项目路径
+
   if (options.template === 'frontend') {
-    const currentWorkingDir = process.cwd(); // 当前执行命令的目录
     const tables = loadTables();
     // 通用文件夹创建
-    const pagesRootDir = path.resolve(currentWorkingDir, './src/pages');
-    const typesRootDir = path.resolve(currentWorkingDir, './src/types');
+    const pagesRootDir = path.resolve(projectRootDir, './src/pages');
+    const typesRootDir = path.resolve(projectRootDir, './src/types');
     mkdirSafely(path.resolve(pagesRootDir));
     mkdirSafely(path.resolve(typesRootDir));
 
@@ -133,6 +138,12 @@ export default function mindlessCopilot(options: {
     //   }),
     // );
   }
+
+  if (options.template === 'backend') {
+    // TODO
+  }
+
+  // TODO 没输入 template 则报错
 }
 
 /**
