@@ -23,11 +23,8 @@ export default function generate(options: {
 
     tables.forEach((table) => {
       // 先创建出所有需要的目录
-      const tableNameSegments = table.name.split('_');
-      const moduleName = tableNameSegments.join('-');
-      const typeName = tableNameSegments
-        .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
-        .join('');
+      const moduleName = convertToHyphenCase(table.name);
+      const typeName = convertToPascalCase(table.name);
       mkdirSafely(path.resolve(pagesRootDir, `${moduleName}/hooks`));
       // 创建 /pages/{moduleName}/hooks/table-columns.tsx
       generateCodeByTemplate(
@@ -101,21 +98,12 @@ export default function generate(options: {
       return;
     }
     tables.forEach((table, index) => {
-      // xx_yy_zz
-      const tableNameSegments = table.name.split('_');
       // xx-yy-zz
-      const moduleName = tableNameSegments.join('-');
+      const moduleName = convertToHyphenCase(table.name);
       // XxYyZx
-      const typeName = tableNameSegments
-        .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
-        .join('');
+      const typeName = convertToPascalCase(table.name);
       // xxYyZz
-      const entityName =
-        tableNameSegments.slice(0, 1) +
-        tableNameSegments
-          .slice(1)
-          .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
-          .join('');
+      const entityName = convertToCamelCase(table.name);
       const rootPackageName = path
         .relative(path.resolve(projectRootDir, 'src/main/java'), targetDir)
         .split('/')
@@ -145,13 +133,17 @@ export default function generate(options: {
           rootPackageName,
           typeName,
           tableName: table.name,
-          columns: table.columns.map(({ comment, name, type }) => {
-            return {
-              comment,
-              name,
-              type: ColumnTypeEnum[type].javaMapping,
-            };
-          }),
+          columns: table.columns
+            .filter(
+              ({ primaryKey, autoIncrement }) => !primaryKey && !autoIncrement, // 过滤掉主键
+            )
+            .map(({ comment, name, type }) => {
+              return {
+                comment,
+                name,
+                type: ColumnTypeEnum[type].javaMapping,
+              };
+            }),
         },
       );
       // 创建 {targetDir}/domain/mapper/{XxYyZzMapper}.java
@@ -219,6 +211,26 @@ export default function generate(options: {
           rootPackageName,
           typeName,
           entityName,
+          filterPrimaryKeyColumns: table.columns
+            .filter(
+              ({ primaryKey, autoIncrement }) => !primaryKey && !autoIncrement, // 过滤掉主键
+            )
+            .map(({ comment, name, type }) => {
+              return {
+                comment,
+                name,
+                camelName: convertToPascalCase(name),
+                type: ColumnTypeEnum[type].javaMapping,
+              };
+            }),
+          columns: table.columns.map(({ comment, name, type }) => {
+            return {
+              comment,
+              name,
+              camelName: convertToPascalCase(name),
+              type: ColumnTypeEnum[type].javaMapping,
+            };
+          }),
         },
       );
       // 创建 {targetDir}/vo/{XxYyZzCreateReqVO}.java
@@ -229,8 +241,20 @@ export default function generate(options: {
         ),
         path.resolve(voDir, `${typeName}CreateReqVO.java`),
         {
+          tableComment: table.comment,
           rootPackageName,
           typeName,
+          columns: table.columns
+            .filter(
+              ({ primaryKey, autoIncrement }) => !primaryKey && !autoIncrement, // 过滤掉主键
+            )
+            .map(({ comment, name, type }) => {
+              return {
+                comment,
+                name,
+                type: ColumnTypeEnum[type].javaMapping,
+              };
+            }),
         },
       );
       // 创建 {targetDir}/vo/{XxYyZzCreateRespVO}.java
@@ -243,6 +267,13 @@ export default function generate(options: {
         {
           rootPackageName,
           typeName,
+          columns: table.columns.map(({ comment, name, type }) => {
+            return {
+              comment,
+              name,
+              type: ColumnTypeEnum[type].javaMapping,
+            };
+          }),
         },
       );
       // 创建 {targetDir}/dto/{XxYyZzServiceCreateDTO}.java
@@ -255,6 +286,17 @@ export default function generate(options: {
         {
           rootPackageName,
           typeName,
+          columns: table.columns
+            .filter(
+              ({ primaryKey, autoIncrement }) => !primaryKey && !autoIncrement, // 过滤掉主键
+            )
+            .map(({ comment, name, type }) => {
+              return {
+                comment,
+                name,
+                type: ColumnTypeEnum[type].javaMapping,
+              };
+            }),
         },
       );
       // 创建 {targetDir}/dto/{XxYyZzServiceCreateRetDTO}.java
@@ -267,6 +309,14 @@ export default function generate(options: {
         {
           rootPackageName,
           typeName,
+          columns: table.columns.map(({ comment, name, type }) => {
+            return {
+              comment,
+              name,
+              camelName: convertToPascalCase(name),
+              type: ColumnTypeEnum[type].javaMapping,
+            };
+          }),
         },
       );
     });
@@ -357,4 +407,20 @@ function findDirContainingFile(
   }
 
   return null; // 如果没有找到匹配文件，返回 null
+}
+
+// xx_yy_zz => xx-yy-zz
+function convertToHyphenCase(input: string): string {
+  return input.replace(/_/g, '-');
+}
+
+// xx-yy-zz => xxYyZz
+function convertToCamelCase(input: string): string {
+  return input.replace(/_./g, (match) => match.charAt(1).toUpperCase());
+}
+
+// xx-yy-zz => XxYyZz
+function convertToPascalCase(input: string): string {
+  const camelCase = convertToCamelCase(input);
+  return camelCase.charAt(0).toLocaleUpperCase() + camelCase.slice(1);
 }

@@ -8,18 +8,34 @@ import {{rootPackageName}}.vo.{{typeName}}CreateRespVO;
 
 public class {{typeName}}Converter {
     public static {{typeName}}ServiceCreateDTO convert({{typeName}}CreateReqVO {{entityName}}CreateReqVO) {
-        return {{typeName}}ServiceCreateDTO.builder().build();
+        return {{typeName}}ServiceCreateDTO.builder()
+                {{#each filterPrimaryKeyColumns}}
+                .{{this.name}}({{../entityName}}CreateReqVO.get{{this.camelName}}())
+                {{/each}}
+                .build();
     }
 
     public static {{typeName}}DO convert({{typeName}}ServiceCreateDTO {{entityName}}ServiceCreateDTO) {
-        return {{typeName}}DO.builder().build();
+        return {{typeName}}DO.builder()
+                {{#each filterPrimaryKeyColumns}}
+                .{{this.name}}({{../entityName}}ServiceCreateDTO.get{{this.camelName}}())
+                {{/each}}
+                .build();
     }
 
     public static {{typeName}}ServiceCreateRetDTO convert({{typeName}}DO {{entityName}}DO) {
-        return {{typeName}}ServiceCreateRetDTO.builder().build();
+        return {{typeName}}ServiceCreateRetDTO.builder()
+                {{#each columns}}
+                .{{this.name}}({{../entityName}}DO.get{{this.camelName}}())
+                {{/each}}
+                .build();
     }
 
     public static {{typeName}}CreateRespVO convert({{typeName}}ServiceCreateRetDTO {{entityName}}ServiceCreateRetDTO) {
-        return {{typeName}}CreateRespVO.builder().build();
+        return {{typeName}}CreateRespVO.builder()
+                {{#each columns}}
+                .{{this.name}}({{../entityName}}ServiceCreateRetDTO.get{{this.camelName}}())
+                {{/each}}
+                .build();
     }
 }
