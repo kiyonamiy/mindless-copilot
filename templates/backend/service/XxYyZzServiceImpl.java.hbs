@@ -1,0 +1,29 @@
+package {{rootPackageName}}.service;
+
+import javax.annotation.Resource;
+import javax.validation.Valid;
+
+import org.springframework.stereotype.Service;
+
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
+import {{rootPackageName}}.common.page.dto.BasePageVO;
+import com.hyperchain.cb.converter.{{typeName}}Converter;
+import com.hyperchain.cb.domain.dataobject.{{typeName}}DO;
+import com.hyperchain.cb.domain.mapper.{{typeName}}Mapper;
+import com.hyperchain.cb.dto.{{typeName}}ServiceCreateDTO;
+import com.hyperchain.cb.dto.{{typeName}}ServiceCreateRetDTO;
+
+@Service
+public class {{typeName}}ServiceImpl implements {{typeName}}Service {
+    @Resource
+    private {{typeName}}Mapper {{entityName}}Mapper;
+
+    @Override
+    public {{typeName}}ServiceCreateRetDTO create{{typeName}}({{typeName}}ServiceCreateDTO {{entityName}}ServiceCreateDTO) {
+        {{typeName}}DO {{entityName}}DO = {{typeName}}Converter.convert({{entityName}}ServiceCreateDTO);
+        {{entityName}}Mapper.insert({{entityName}}DO);
+        {{typeName}}ServiceCreateRetDTO {{entityName}}ServiceCreateRetDTO = {{typeName}}Converter.convert({{entityName}}DO);
+        return {{entityName}}ServiceCreateRetDTO;
+    }
+}

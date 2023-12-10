@@ -1,0 +1,25 @@
+package {{rootPackageName}}.converter;
+
+import com.hyperchain.cb.domain.dataobject.{{typeName}}DO;
+import {{rootPackageName}}.dto.{{typeName}}ServiceCreateDTO;
+import {{rootPackageName}}.dto.{{typeName}}ServiceCreateRetDTO;
+import {{rootPackageName}}.vo.{{typeName}}CreateReqVO;
+import {{rootPackageName}}.vo.{{typeName}}CreateRespVO;
+
+public class {{typeName}}Converter {
+    public static {{typeName}}ServiceCreateDTO convert({{typeName}}CreateReqVO {{entityName}}CreateReqVO) {
+        return {{typeName}}ServiceCreateDTO.builder().build();
+    }
+
+    public static {{typeName}}DO convert({{typeName}}ServiceCreateDTO {{entityName}}ServiceCreateDTO) {
+        return {{typeName}}DO.builder().build();
+    }
+
+    public static {{typeName}}ServiceCreateRetDTO convert({{typeName}}DO {{entityName}}DO) {
+        return {{typeName}}ServiceCreateRetDTO.builder().build();
+    }
+
+    public static {{typeName}}CreateRespVO convert({{typeName}}ServiceCreateRetDTO {{entityName}}ServiceCreateRetDTO) {
+        return {{typeName}}CreateRespVO.builder().build();
+    }
+}

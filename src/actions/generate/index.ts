@@ -100,26 +100,51 @@ export default function generate(options: {
       // TODO 报错提示
       return;
     }
-    tables.forEach((table) => {
+    tables.forEach((table, index) => {
+      // xx_yy_zz
       const tableNameSegments = table.name.split('_');
+      // xx-yy-zz
+      const moduleName = tableNameSegments.join('-');
+      // XxYyZx
       const typeName = tableNameSegments
         .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
         .join('');
-      // const rootPackageName = path
-      //   .relative(path.resolve(projectRootDir, 'src/main/java'), targetDir)
-      //   .split('/')
-      //   .join('.');
+      // xxYyZz
+      const entityName =
+        tableNameSegments.slice(0, 1) +
+        tableNameSegments
+          .slice(1)
+          .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+          .join('');
+      const rootPackageName = path
+        .relative(path.resolve(projectRootDir, 'src/main/java'), targetDir)
+        .split('/')
+        .join('.');
       const dataobjectDir = path.resolve(targetDir, 'domain/dataobject');
       mkdirSafely(dataobjectDir);
-      // 创建 {targetDir}/domain/dataobject/{XxxDo}.java
+      const mapperDir = path.resolve(targetDir, 'domain/mapper');
+      mkdirSafely(mapperDir);
+      const controllerDir = path.resolve(targetDir, 'controller');
+      mkdirSafely(controllerDir);
+      const serviceDir = path.resolve(targetDir, 'service');
+      mkdirSafely(serviceDir);
+      const voDir = path.resolve(targetDir, 'vo');
+      mkdirSafely(voDir);
+      const dtoDir = path.resolve(targetDir, 'dto');
+      mkdirSafely(dtoDir);
+      const converterDir = path.resolve(targetDir, 'converter');
+      mkdirSafely(converterDir);
+      // 创建 {targetDir}/domain/dataobject/{XxYyZzDO}.java
       generateCodeByTemplate(
         path.resolve(
           __dirname,
-          '../../../templates/backend/domain/dataobject/DO.java.hbs',
+          '../../../templates/backend/domain/dataobject/XxYyZzDO.java.hbs',
         ),
         path.resolve(dataobjectDir, `${typeName}DO.java`),
         {
+          rootPackageName,
           typeName,
+          tableName: table.name,
           columns: table.columns.map(({ comment, name, type }) => {
             return {
               comment,
@@ -129,10 +154,127 @@ export default function generate(options: {
           }),
         },
       );
+      // 创建 {targetDir}/domain/mapper/{XxYyZzMapper}.java
+      generateCodeByTemplate(
+        path.resolve(
+          __dirname,
+          '../../../templates/backend/domain/mapper/XxYyZzMapper.java.hbs',
+        ),
+        path.resolve(mapperDir, `${typeName}Mapper.java`),
+        {
+          rootPackageName,
+          typeName,
+        },
+      );
+      // 创建 {targetDir}/controller/{XxYyZzController}.java
+      generateCodeByTemplate(
+        path.resolve(
+          __dirname,
+          '../../../templates/backend/controller/XxYyZzController.java.hbs',
+        ),
+        path.resolve(controllerDir, `${typeName}Controller.java`),
+        {
+          tableComment: table.comment,
+          index,
+          moduleName,
+          rootPackageName,
+          typeName,
+          entityName,
+        },
+      );
+      // 创建 {targetDir}/service/{XxYyZzService}.java
+      generateCodeByTemplate(
+        path.resolve(
+          __dirname,
+          '../../../templates/backend/service/XxYyZzService.java.hbs',
+        ),
+        path.resolve(serviceDir, `${typeName}Service.java`),
+        {
+          rootPackageName,
+          typeName,
+          // entityName,
+        },
+      );
+      // 创建 {targetDir}/service/{XxYyZzServiceImpl}.java
+      generateCodeByTemplate(
+        path.resolve(
+          __dirname,
+          '../../../templates/backend/service/XxYyZzServiceImpl.java.hbs',
+        ),
+        path.resolve(serviceDir, `${typeName}ServiceImpl.java`),
+        {
+          rootPackageName,
+          typeName,
+          entityName,
+        },
+      );
+      // 创建 {targetDir}/converter/{XxYyZzConverter}.java
+      generateCodeByTemplate(
+        path.resolve(
+          __dirname,
+          '../../../templates/backend/converter/XxYyZzConverter.java.hbs',
+        ),
+        path.resolve(converterDir, `${typeName}Converter.java`),
+        {
+          rootPackageName,
+          typeName,
+          entityName,
+        },
+      );
+      // 创建 {targetDir}/vo/{XxYyZzCreateReqVO}.java
+      generateCodeByTemplate(
+        path.resolve(
+          __dirname,
+          '../../../templates/backend/vo/XxYyZzCreateReqVO.java.hbs',
+        ),
+        path.resolve(voDir, `${typeName}CreateReqVO.java`),
+        {
+          rootPackageName,
+          typeName,
+        },
+      );
+      // 创建 {targetDir}/vo/{XxYyZzCreateRespVO}.java
+      generateCodeByTemplate(
+        path.resolve(
+          __dirname,
+          '../../../templates/backend/vo/XxYyZzCreateRespVO.java.hbs',
+        ),
+        path.resolve(voDir, `${typeName}CreateRespVO.java`),
+        {
+          rootPackageName,
+          typeName,
+        },
+      );
+      // 创建 {targetDir}/dto/{XxYyZzServiceCreateDTO}.java
+      generateCodeByTemplate(
+        path.resolve(
+          __dirname,
+          '../../../templates/backend/dto/XxYyZzServiceCreateDTO.java.hbs',
+        ),
+        path.resolve(dtoDir, `${typeName}ServiceCreateDTO.java`),
+        {
+          rootPackageName,
+          typeName,
+        },
+      );
+      // 创建 {targetDir}/dto/{XxYyZzServiceCreateRetDTO}.java
+      generateCodeByTemplate(
+        path.resolve(
+          __dirname,
+          '../../../templates/backend/dto/XxYyZzServiceCreateRetDTO.java.hbs',
+        ),
+        path.resolve(dtoDir, `${typeName}ServiceCreateRetDTO.java`),
+        {
+          rootPackageName,
+          typeName,
+        },
+      );
     });
   }
 
   // TODO 处理 没输入 template 则报错
+  // TODO 丰富日志（console 不打印）
+  // TODO 会直接覆盖掉已有的文件（没有做提示）
 }
 
 /**

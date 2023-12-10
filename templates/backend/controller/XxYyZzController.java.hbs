@@ -1,0 +1,76 @@
+package {{rootPackageName}}.controller;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
+import {{rootPackageName}}.common.auth.annotation.PermissionCheck;
+import {{rootPackageName}}.common.page.dto.BasePageVO;
+import com.hyperchain.cb.converter.{{typeName}}Converter;
+import {{rootPackageName}}.vo.{{typeName}}CreateReqVO;
+import {{rootPackageName}}.vo.{{typeName}}CreateRespVO;
+import {{rootPackageName}}.domain.response.Response;
+import com.hyperchain.cb.dto.{{typeName}}ServiceCreateDTO;
+import com.hyperchain.cb.dto.{{typeName}}ServiceCreateRetDTO;
+import {{rootPackageName}}.service.{{typeName}}Service;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import javax.validation.Valid;
+
+@Tag(name = "{{index}}-{{tableComment}}", description = "{{tableComment}}接口")
+@RestController
+@RequestMapping("/{{moduleName}}")
+@Validated
+public class {{typeName}}Controller {
+
+    @Resource
+    private {{typeName}}Service {{entityName}}Service;
+
+    @PostMapping("create")
+    @Operation(summary = "创建{{tableComment}}")
+    @PermissionCheck(code = "{{entityName}}:create")
+    public Response<{{typeName}}CreateRespVO> create(@Valid @RequestBody {{typeName}}CreateReqVO {{entityName}}CreateReqVO) {
+        {{typeName}}ServiceCreateDTO {{entityName}}ServiceCreateDTO = {{typeName}}Converter.convert({{entityName}}CreateReqVO);
+        {{typeName}}ServiceCreateRetDTO {{entityName}}ServiceCreateRetDTO = {{entityName}}Service.create{{typeName}}({{entityName}}ServiceCreateDTO);
+        {{typeName}}CreateRespVO {{entityName}}CreateRespVO = {{typeName}}Converter.convert({{entityName}}ServiceCreateRetDTO);
+        return new Response<>({{entityName}}CreateRespVO);
+    }
+    {{!-- @GetMapping("page")
+    @Operation(summary = "分页查询{{tableComment}}")
+    @PermissionCheck(code = "{{entityName}}:get")
+    public Response<PageDTO<{{typeName}}DO>> get{{typeName}}Page(BasePageVO pageReqVO) {
+        return new Response<>({{entityName}}Service.get{{typeName}}Page(pageReqVO));
+    }
+
+    @DeleteMapping("delete")
+    @Operation(summary = "删除{{tableComment}}")
+    @PermissionCheck(code = "{{entityName}}:delete")
+    public Response<Boolean> delete{{typeName}}(@RequestParam("id") Long id) {
+        {{entityName}}Service.delete{{typeName}}(id);
+        return new Response<>(Boolean.TRUE);
+    }
+
+    @PutMapping("update")
+    @Operation(summary = "更新{{tableComment}}")
+    @PermissionCheck(code = "{{entityName}}:update")
+    public Response<Boolean> update{{typeName}}(@Valid @RequestBody UpdateDTO updateDTO) {
+        {{entityName}}Service.update{{typeName}}(updateDTO);
+        return new Response<>(Boolean.TRUE);
+    }
+
+    @GetMapping("get")
+    @Operation(summary = "获取单个{{tableComment}}")
+    @PermissionCheck(code = "{{entityName}}:get")
+    public Response<{{typeName}}DO> get{{typeName}}(GetDTO getDTO) {
+        return new Response<>({{entityName}}Service.get{{typeName}}(getDTO));
+    } --}}
+}

@@ -1,0 +1,12 @@
+package {{rootPackageName}}.service;
+
+import {{rootPackageName}}.dto.{{typeName}}ServiceCreateDTO;
+import {{rootPackageName}}.dto.{{typeName}}ServiceCreateRetDTO;
+
+public interface {{typeName}}Service {
+    {{typeName}}ServiceCreateRetDTO create{{typeName}}({{typeName}}ServiceCreateDTO {{entityName}}ServiceCreateDTO);
+    {{!-- PageDTO<{{typeName}}DO> get{{typeName}}Page(BasePageVO pageReqVO);
+    void delete{{typeName}}(Long id);
+    void update{{typeName}}(@Valid UpdateDTO updateDTO);
+    {{typeName}}DO get{{typeName}}(GetDTO getDTO); --}}
+}
