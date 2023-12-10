@@ -1,8 +1,9 @@
-import path from 'path';
 import fs from 'fs';
-import { Table } from './types/table';
 import Handlebars from 'handlebars';
+import path from 'path';
+
 import ColumnTypeEnum from './constants/column-type';
+import { Table } from './types/table';
 
 export default function mindlessCopilot(options: { code: boolean }) {
   if (options.code) {

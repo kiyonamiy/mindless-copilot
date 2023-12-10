@@ -46,6 +46,9 @@ devDependencies:
   eslint-plugin-prettier:
     specifier: ^5.0.1
     version: registry.npmmirror.com/eslint-plugin-prettier@5.0.1(eslint-config-prettier@9.0.0)(eslint@8.55.0)(prettier@3.1.0)
+  eslint-plugin-simple-import-sort:
+    specifier: ^10.0.0
+    version: 10.0.0(eslint@8.55.0)
   husky:
     specifier: ^8.0.3
     version: registry.npmmirror.com/husky@8.0.3
@@ -106,6 +109,14 @@ packages:
 
   /emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==, tarball: https://registry.npmmirror.com/emoji-regex/-/emoji-regex-8.0.0.tgz}
+    dev: true
+
+  /eslint-plugin-simple-import-sort@10.0.0(eslint@8.55.0):
+    resolution: {integrity: sha512-AeTvO9UCMSNzIHRkg8S6c3RPy5YEwKWSQPx3DYghLedo2ZQxowPFLGDN1AZ2evfg6r6mjBSZSLxLFsWSu3acsw==, tarball: https://registry.npmmirror.com/eslint-plugin-simple-import-sort/-/eslint-plugin-simple-import-sort-10.0.0.tgz}
+    peerDependencies:
+      eslint: '>=5.0.0'
+    dependencies:
+      eslint: registry.npmmirror.com/eslint@8.55.0
     dev: true
 
   /fsevents@2.3.3:
