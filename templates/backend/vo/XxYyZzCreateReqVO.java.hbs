@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Schema(description = "{{tableComment}}-创建 VO")
-public class {{typeName}}CreateReqVO {
-    {{#each columns}}
+public class {{pascalTableName}}CreateReqVO {
+    {{#each filterPrimaryKeyColumns}}
     @Schema(description = "{{this.comment}}")
     private {{this.type}} {{this.name}};
     {{/each}}

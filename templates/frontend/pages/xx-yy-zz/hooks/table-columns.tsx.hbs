@@ -1,14 +1,14 @@
 import { TableColumnsType } from 'antd';
 import { useMemo } from 'react';
-import {{typeName}} from '@/types/{{moduleName}}';
+import {{pascalTableName}} from '@/types/{{hyphenTableName}}';
 
 // import ActionGroup from '@/components/action-group';
 // import { UserStatusEnum } from '@/constants/user';
 
 export const useTableColumns = () => {
-  const columns: TableColumnsType<{{typeName}}> = useMemo(
+  const columns: TableColumnsType<{{pascalTableName}}> = useMemo(
     () => [
-      {{#each columns}}
+      {{#each tableColumns}}
       {
         title: '{{this.title}}',
         dataIndex: '{{this.dataIndex}}',

@@ -15,74 +15,31 @@ export default function generate(options: {
 
   const tables = loadTables(path.resolve(projectRootDir, 'sql/sql.json'));
   if (options.template === 'frontend') {
-    // 通用文件夹创建
-    const pagesRootDir = path.resolve(projectRootDir, './src/pages');
-    const typesRootDir = path.resolve(projectRootDir, './src/types');
-    mkdirSafely(path.resolve(pagesRootDir));
-    mkdirSafely(path.resolve(typesRootDir));
-
     tables.forEach((table) => {
-      // 先创建出所有需要的目录
-      const moduleName = convertToHyphenCase(table.name);
-      const typeName = convertToPascalCase(table.name);
-      mkdirSafely(path.resolve(pagesRootDir, `${moduleName}/hooks`));
-      // 创建 /pages/{moduleName}/hooks/table-columns.tsx
-      generateCodeByTemplate(
-        path.resolve(
-          __dirname,
-          '../../../templates/frontend/pages/table-page/hooks/table-columns.tsx.hbs',
-        ),
-        path.resolve(pagesRootDir, `${moduleName}/hooks/table-columns.tsx`),
-        {
-          moduleName,
-          typeName,
-          columns: table.columns.map((column) => {
-            return {
-              title: column.comment,
-              dataIndex: column.name,
-            };
-          }),
-        },
-      );
-      // 创建 /pages/{moduleName}/index.less
-      generateCodeByTemplate(
-        path.resolve(
-          __dirname,
-          '../../../templates/frontend/pages/table-page/index.less.hbs',
-        ),
-        path.resolve(pagesRootDir, `${moduleName}/index.less`),
-        {
-          moduleName,
-        },
-      );
-      // 创建 /pages/{moduleName}/index.ts
-      generateCodeByTemplate(
-        path.resolve(
-          __dirname,
-          '../../../templates/frontend/pages/table-page/index.tsx.hbs',
-        ),
-        path.resolve(pagesRootDir, `${moduleName}/index.tsx`),
-        {
-          moduleName,
-          typeName,
-        },
-      );
-      // 创建 /types/{moduleName}.ts
-      generateCodeByTemplate(
-        path.resolve(
-          __dirname,
-          '../../../templates/frontend/types/index.ts.hbs',
-        ),
-        path.resolve(typesRootDir, `${moduleName}.ts`),
-        {
-          typeName,
-          columns: table.columns.map((column) => {
-            return {
-              key: column.name,
-              type: ColumnTypeEnum[column.type].jsMapping,
-            };
-          }),
-        },
+      const templateData = {
+        index: 0,
+        tableName: table.name,
+        tableComment: table.comment,
+        camelTableName: convertToCamelCase(table.name),
+        hyphenTableName: convertToHyphenCase(table.name),
+        pascalTableName: convertToPascalCase(table.name),
+        tableColumns: table.columns.map((column) => {
+          return {
+            title: column.comment,
+            dataIndex: column.name,
+          };
+        }),
+        typeItems: table.columns.map((column) => {
+          return {
+            key: column.name,
+            type: ColumnTypeEnum[column.type].jsMapping,
+          };
+        }),
+      };
+      generateCode(
+        path.resolve(__dirname, '../../../templates/frontend'),
+        path.resolve(projectRootDir, 'src/'),
+        templateData,
       );
     });
   }
@@ -97,133 +54,25 @@ export default function generate(options: {
       // TODO 报错提示
       return;
     }
+    const rootPackageName = path
+      .relative(path.resolve(projectRootDir, 'src/main/java'), targetDir)
+      .split('/')
+      .join('.');
     tables.forEach((table, index) => {
-      // xx-yy-zz
-      const moduleName = convertToHyphenCase(table.name);
-      // XxYyZx
-      const typeName = convertToPascalCase(table.name);
-      // xxYyZz
-      const entityName = convertToCamelCase(table.name);
-      const rootPackageName = path
-        .relative(path.resolve(projectRootDir, 'src/main/java'), targetDir)
-        .split('/')
-        .join('.');
-      const dataobjectDir = path.resolve(targetDir, 'domain/dataobject');
-      mkdirSafely(dataobjectDir);
-      const mapperDir = path.resolve(targetDir, 'domain/mapper');
-      mkdirSafely(mapperDir);
-      const controllerDir = path.resolve(targetDir, 'controller');
-      mkdirSafely(controllerDir);
-      const serviceDir = path.resolve(targetDir, 'service');
-      mkdirSafely(serviceDir);
-      const voDir = path.resolve(targetDir, 'vo');
-      mkdirSafely(voDir);
-      const dtoDir = path.resolve(targetDir, 'dto');
-      mkdirSafely(dtoDir);
-      const converterDir = path.resolve(targetDir, 'converter');
-      mkdirSafely(converterDir);
-      // 创建 {targetDir}/domain/dataobject/{XxYyZzDO}.java
-      generateCodeByTemplate(
-        path.resolve(
-          __dirname,
-          '../../../templates/backend/domain/dataobject/XxYyZzDO.java.hbs',
-        ),
-        path.resolve(dataobjectDir, `${typeName}DO.java`),
-        {
-          rootPackageName,
-          typeName,
-          tableName: table.name,
-          columns: table.columns
-            .filter(
-              ({ primaryKey, autoIncrement }) => !primaryKey && !autoIncrement, // 过滤掉主键
-            )
-            .map(({ comment, name, type }) => {
-              return {
-                comment,
-                name,
-                type: ColumnTypeEnum[type].javaMapping,
-              };
-            }),
-        },
-      );
-      // 创建 {targetDir}/domain/mapper/{XxYyZzMapper}.java
-      generateCodeByTemplate(
-        path.resolve(
-          __dirname,
-          '../../../templates/backend/domain/mapper/XxYyZzMapper.java.hbs',
-        ),
-        path.resolve(mapperDir, `${typeName}Mapper.java`),
-        {
-          rootPackageName,
-          typeName,
-        },
-      );
-      // 创建 {targetDir}/controller/{XxYyZzController}.java
-      generateCodeByTemplate(
-        path.resolve(
-          __dirname,
-          '../../../templates/backend/controller/XxYyZzController.java.hbs',
-        ),
-        path.resolve(controllerDir, `${typeName}Controller.java`),
-        {
-          tableComment: table.comment,
-          index,
-          moduleName,
-          rootPackageName,
-          typeName,
-          entityName,
-        },
-      );
-      // 创建 {targetDir}/service/{XxYyZzService}.java
-      generateCodeByTemplate(
-        path.resolve(
-          __dirname,
-          '../../../templates/backend/service/XxYyZzService.java.hbs',
-        ),
-        path.resolve(serviceDir, `${typeName}Service.java`),
-        {
-          rootPackageName,
-          typeName,
-          // entityName,
-        },
-      );
-      // 创建 {targetDir}/service/{XxYyZzServiceImpl}.java
-      generateCodeByTemplate(
-        path.resolve(
-          __dirname,
-          '../../../templates/backend/service/XxYyZzServiceImpl.java.hbs',
-        ),
-        path.resolve(serviceDir, `${typeName}ServiceImpl.java`),
-        {
-          rootPackageName,
-          typeName,
-          entityName,
-        },
-      );
-      // 创建 {targetDir}/converter/{XxYyZzConverter}.java
-      generateCodeByTemplate(
-        path.resolve(
-          __dirname,
-          '../../../templates/backend/converter/XxYyZzConverter.java.hbs',
-        ),
-        path.resolve(converterDir, `${typeName}Converter.java`),
-        {
-          rootPackageName,
-          typeName,
-          entityName,
-          filterPrimaryKeyColumns: table.columns
-            .filter(
-              ({ primaryKey, autoIncrement }) => !primaryKey && !autoIncrement, // 过滤掉主键
-            )
-            .map(({ comment, name, type }) => {
-              return {
-                comment,
-                name,
-                camelName: convertToPascalCase(name),
-                type: ColumnTypeEnum[type].javaMapping,
-              };
-            }),
-          columns: table.columns.map(({ comment, name, type }) => {
+      // 准备数据
+      const templateData = {
+        index,
+        tableName: table.name,
+        tableComment: table.comment,
+        pascalTableName: convertToPascalCase(table.name),
+        camelTableName: convertToPascalCase(table.name),
+        hyphenTableName: convertToHyphenCase(table.name),
+        rootPackageName,
+        filterPrimaryKeyColumns: table.columns
+          .filter(
+            ({ primaryKey, autoIncrement }) => !primaryKey && !autoIncrement, // 过滤掉主键
+          )
+          .map(({ comment, name, type }) => {
             return {
               comment,
               name,
@@ -231,93 +80,20 @@ export default function generate(options: {
               type: ColumnTypeEnum[type].javaMapping,
             };
           }),
-        },
-      );
-      // 创建 {targetDir}/vo/{XxYyZzCreateReqVO}.java
-      generateCodeByTemplate(
-        path.resolve(
-          __dirname,
-          '../../../templates/backend/vo/XxYyZzCreateReqVO.java.hbs',
-        ),
-        path.resolve(voDir, `${typeName}CreateReqVO.java`),
-        {
-          tableComment: table.comment,
-          rootPackageName,
-          typeName,
-          columns: table.columns
-            .filter(
-              ({ primaryKey, autoIncrement }) => !primaryKey && !autoIncrement, // 过滤掉主键
-            )
-            .map(({ comment, name, type }) => {
-              return {
-                comment,
-                name,
-                type: ColumnTypeEnum[type].javaMapping,
-              };
-            }),
-        },
-      );
-      // 创建 {targetDir}/vo/{XxYyZzCreateRespVO}.java
-      generateCodeByTemplate(
-        path.resolve(
-          __dirname,
-          '../../../templates/backend/vo/XxYyZzCreateRespVO.java.hbs',
-        ),
-        path.resolve(voDir, `${typeName}CreateRespVO.java`),
-        {
-          rootPackageName,
-          typeName,
-          columns: table.columns.map(({ comment, name, type }) => {
-            return {
-              comment,
-              name,
-              type: ColumnTypeEnum[type].javaMapping,
-            };
-          }),
-        },
-      );
-      // 创建 {targetDir}/dto/{XxYyZzServiceCreateDTO}.java
-      generateCodeByTemplate(
-        path.resolve(
-          __dirname,
-          '../../../templates/backend/dto/XxYyZzServiceCreateDTO.java.hbs',
-        ),
-        path.resolve(dtoDir, `${typeName}ServiceCreateDTO.java`),
-        {
-          rootPackageName,
-          typeName,
-          columns: table.columns
-            .filter(
-              ({ primaryKey, autoIncrement }) => !primaryKey && !autoIncrement, // 过滤掉主键
-            )
-            .map(({ comment, name, type }) => {
-              return {
-                comment,
-                name,
-                type: ColumnTypeEnum[type].javaMapping,
-              };
-            }),
-        },
-      );
-      // 创建 {targetDir}/dto/{XxYyZzServiceCreateRetDTO}.java
-      generateCodeByTemplate(
-        path.resolve(
-          __dirname,
-          '../../../templates/backend/dto/XxYyZzServiceCreateRetDTO.java.hbs',
-        ),
-        path.resolve(dtoDir, `${typeName}ServiceCreateRetDTO.java`),
-        {
-          rootPackageName,
-          typeName,
-          columns: table.columns.map(({ comment, name, type }) => {
-            return {
-              comment,
-              name,
-              camelName: convertToPascalCase(name),
-              type: ColumnTypeEnum[type].javaMapping,
-            };
-          }),
-        },
+        columns: table.columns.map(({ comment, name, type }) => {
+          return {
+            comment,
+            name,
+            camelName: convertToPascalCase(name),
+            type: ColumnTypeEnum[type].javaMapping,
+          };
+        }),
+      };
+      // 生成代码
+      generateCode(
+        path.resolve(__dirname, '../../../templates/backend'),
+        targetDir,
+        templateData,
       );
     });
   }
@@ -325,6 +101,59 @@ export default function generate(options: {
   // TODO 处理 没输入 template 则报错
   // TODO 丰富日志（console 不打印）
   // TODO 会直接覆盖掉已有的文件（没有做提示）
+}
+
+function generateCode(
+  templateDir: string,
+  targetDir: string,
+  data: {
+    tableName: string;
+    camelTableName: string;
+    hyphenTableName: string;
+    pascalTableName: string;
+  } & Record<string, unknown>,
+) {
+  const hbsExt = '.hbs';
+
+  const files = fs.readdirSync(templateDir);
+
+  for (const filename of files) {
+    const tempFilepath = path.join(templateDir, filename);
+    const stats = fs.statSync(tempFilepath);
+    const targetFilename = filename
+      .replace(/XxYyZz/g, data.pascalTableName)
+      .replace(/xx-yy-zz/g, data.hyphenTableName)
+      .replace(/xxYyZz/g, data.camelTableName);
+    if (stats.isDirectory()) {
+      const nextTargetDir = path.resolve(targetDir, targetFilename);
+      try {
+        fs.mkdirSync(nextTargetDir, { recursive: true });
+      } catch (err: unknown) {
+        if (isErrnoException(err) && err?.code === 'EEXIST') {
+          console.log('文件夹已经存在：', err.path);
+          return;
+        }
+        throw err;
+      }
+      generateCode(tempFilepath, nextTargetDir, data);
+    } else if (stats.isFile()) {
+      let targetFilepath = path.resolve(targetDir, targetFilename);
+      // 普通文件直接复制
+      if (!targetFilepath.endsWith(hbsExt)) {
+        fs.copyFileSync(tempFilepath, targetFilepath);
+        return;
+      }
+      // hbs 文件：模板引擎渲染
+      targetFilepath = targetFilepath.slice(0, -hbsExt.length);
+      // 读取模板
+      const templateContent = fs.readFileSync(tempFilepath, 'utf-8');
+      // 模板与变量进行组合
+      const templateDelegate = Handlebars.compile(templateContent);
+      const compiledContent = templateDelegate(data);
+      // 写入文件
+      fs.writeFileSync(targetFilepath, compiledContent);
+    }
+  }
 }
 
 /**
@@ -337,45 +166,8 @@ function loadTables(sqlFilepath: string): Table[] {
   return tables;
 }
 
-/**
- * 创建文件夹时候可能会出现“文件夹已经存在”的情况，不抛错继续执行
- * @param dirPath 要创建的文件夹的绝对路径
- * @returns void
- */
-function mkdirSafely(dirPath: string): void {
-  try {
-    fs.mkdirSync(dirPath, { recursive: true });
-  } catch (err: unknown) {
-    if (isErrnoException(err) && err?.code === 'EEXIST') {
-      console.log('文件夹已经存在：', err.path);
-      return;
-    }
-    throw err;
-  }
-}
-
 function isErrnoException(err: unknown): err is NodeJS.ErrnoException {
   return (err as NodeJS.ErrnoException)?.code !== undefined;
-}
-
-/**
- * 根据模板和数据生成代码，并写入文件
- * @param templatePath 模板文件的绝对路径
- * @param outputPath 输出文件的绝对路径
- * @param data 模板所需的数据
- */
-function generateCodeByTemplate(
-  templatePath: string,
-  outputPath: string,
-  data: Record<string, unknown>,
-) {
-  // 读取模板
-  const templateContent = fs.readFileSync(templatePath, 'utf-8');
-  // 模板与变量进行组合
-  const templateDelegate = Handlebars.compile(templateContent);
-  const compiledContent = templateDelegate(data);
-  // 写入文件
-  fs.writeFileSync(outputPath, compiledContent);
 }
 
 /**

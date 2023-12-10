@@ -6,8 +6,8 @@ import lombok.Data;
 
 @Data
 @Builder
-public class {{typeName}}ServiceCreateDTO {
-    {{#each columns}}
+public class {{pascalTableName}}ServiceCreateDTO {
+    {{#each filterPrimaryKeyColumns}}
     /**
      * {{this.comment}}
      */

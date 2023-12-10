@@ -1,40 +1,40 @@
 package {{rootPackageName}}.converter;
 
-import com.hyperchain.cb.domain.dataobject.{{typeName}}DO;
-import {{rootPackageName}}.dto.{{typeName}}ServiceCreateDTO;
-import {{rootPackageName}}.dto.{{typeName}}ServiceCreateRetDTO;
-import {{rootPackageName}}.vo.{{typeName}}CreateReqVO;
-import {{rootPackageName}}.vo.{{typeName}}CreateRespVO;
+import com.hyperchain.cb.domain.dataobject.{{pascalTableName}}DO;
+import {{rootPackageName}}.dto.{{pascalTableName}}ServiceCreateDTO;
+import {{rootPackageName}}.dto.{{pascalTableName}}ServiceCreateRetDTO;
+import {{rootPackageName}}.vo.{{pascalTableName}}CreateReqVO;
+import {{rootPackageName}}.vo.{{pascalTableName}}CreateRespVO;
 
-public class {{typeName}}Converter {
-    public static {{typeName}}ServiceCreateDTO convert({{typeName}}CreateReqVO {{entityName}}CreateReqVO) {
-        return {{typeName}}ServiceCreateDTO.builder()
+public class {{pascalTableName}}Converter {
+    public static {{pascalTableName}}ServiceCreateDTO convert({{pascalTableName}}CreateReqVO {{camelTableName}}CreateReqVO) {
+        return {{pascalTableName}}ServiceCreateDTO.builder()
                 {{#each filterPrimaryKeyColumns}}
-                .{{this.name}}({{../entityName}}CreateReqVO.get{{this.camelName}}())
+                .{{this.name}}({{../pascalTableName}}CreateReqVO.get{{this.camelName}}())
                 {{/each}}
                 .build();
     }
 
-    public static {{typeName}}DO convert({{typeName}}ServiceCreateDTO {{entityName}}ServiceCreateDTO) {
-        return {{typeName}}DO.builder()
+    public static {{pascalTableName}}DO convert({{pascalTableName}}ServiceCreateDTO {{camelTableName}}ServiceCreateDTO) {
+        return {{pascalTableName}}DO.builder()
                 {{#each filterPrimaryKeyColumns}}
-                .{{this.name}}({{../entityName}}ServiceCreateDTO.get{{this.camelName}}())
+                .{{this.name}}({{../pascalTableName}}ServiceCreateDTO.get{{this.camelName}}())
                 {{/each}}
                 .build();
     }
 
-    public static {{typeName}}ServiceCreateRetDTO convert({{typeName}}DO {{entityName}}DO) {
-        return {{typeName}}ServiceCreateRetDTO.builder()
+    public static {{pascalTableName}}ServiceCreateRetDTO convert({{pascalTableName}}DO {{camelTableName}}DO) {
+        return {{pascalTableName}}ServiceCreateRetDTO.builder()
                 {{#each columns}}
-                .{{this.name}}({{../entityName}}DO.get{{this.camelName}}())
+                .{{this.name}}({{../pascalTableName}}DO.get{{this.camelName}}())
                 {{/each}}
                 .build();
     }
 
-    public static {{typeName}}CreateRespVO convert({{typeName}}ServiceCreateRetDTO {{entityName}}ServiceCreateRetDTO) {
-        return {{typeName}}CreateRespVO.builder()
+    public static {{pascalTableName}}CreateRespVO convert({{pascalTableName}}ServiceCreateRetDTO {{camelTableName}}ServiceCreateRetDTO) {
+        return {{pascalTableName}}CreateRespVO.builder()
                 {{#each columns}}
-                .{{this.name}}({{../entityName}}ServiceCreateRetDTO.get{{this.camelName}}())
+                .{{this.name}}({{../pascalTableName}}ServiceCreateRetDTO.get{{this.camelName}}())
                 {{/each}}
                 .build();
     }

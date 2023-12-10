@@ -1,12 +1,12 @@
 package {{rootPackageName}}.service;
 
-import {{rootPackageName}}.dto.{{typeName}}ServiceCreateDTO;
-import {{rootPackageName}}.dto.{{typeName}}ServiceCreateRetDTO;
+import {{rootPackageName}}.dto.{{pascalTableName}}ServiceCreateDTO;
+import {{rootPackageName}}.dto.{{pascalTableName}}ServiceCreateRetDTO;
 
-public interface {{typeName}}Service {
-    {{typeName}}ServiceCreateRetDTO create{{typeName}}({{typeName}}ServiceCreateDTO {{entityName}}ServiceCreateDTO);
-    {{!-- PageDTO<{{typeName}}DO> get{{typeName}}Page(BasePageVO pageReqVO);
-    void delete{{typeName}}(Long id);
-    void update{{typeName}}(@Valid UpdateDTO updateDTO);
-    {{typeName}}DO get{{typeName}}(GetDTO getDTO); --}}
+public interface {{pascalTableName}}Service {
+    {{pascalTableName}}ServiceCreateRetDTO create{{pascalTableName}}({{pascalTableName}}ServiceCreateDTO {{camelTableName}}ServiceCreateDTO);
+    {{!-- PageDTO<{{pascalTableName}}DO> get{{pascalTableName}}Page(BasePageVO pageReqVO);
+    void delete{{pascalTableName}}(Long id);
+    void update{{pascalTableName}}(@Valid UpdateDTO updateDTO);
+    {{pascalTableName}}DO get{{pascalTableName}}(GetDTO getDTO); --}}
 }

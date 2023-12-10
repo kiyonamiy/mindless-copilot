@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName(value = "{{tableName}}", autoResultMap = true)
-public class {{typeName}}DO extends BaseDO {
-    {{#each columns}}
+public class {{pascalTableName}}DO extends BaseDO {
+    {{#each filterPrimaryKeyColumns}}
     /**
      * {{this.comment}}
      */

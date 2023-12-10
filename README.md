@@ -3,7 +3,11 @@
 ### 本地测试（开发过程）
 
 ```typescript
+// 后端代码生成
 npx ts-node -r tsconfig-paths/register ./src/index.ts generate -t backend --dir ../energy-hx-backend
+
+// 前端代码生成
+npx ts-node -r tsconfig-paths/register ./src/index.ts generate -t frontend --dir ./examples/react
 ```
 
 ## 项目开发过程
