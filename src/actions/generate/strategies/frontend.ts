@@ -1,8 +1,10 @@
+import path from 'path';
+
 import ColumnTypeEnum from '@/constants/column-type';
 import { Table } from '@/types/table';
-import generateCode from '../core';
-import path from 'path';
 import StringUtils from '@/utils/string';
+
+import generateCode from '../core';
 
 export default function generateFrontend(
   projectRootDir: string,

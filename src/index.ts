@@ -1,5 +1,6 @@
 #! /usr/bin/env node
 import { Command } from 'commander';
+
 import generateAction from '@/actions/generate';
 
 const program = new Command();

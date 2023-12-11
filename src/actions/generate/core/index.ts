@@ -1,6 +1,6 @@
-import path from 'path';
 import fs from 'fs';
 import Handlebars from 'handlebars';
+import path from 'path';
 
 /**
  * 组合数据和模板，生成代码，并将生成的代码写入到对应位置

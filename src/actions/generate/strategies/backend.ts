@@ -1,9 +1,10 @@
 import fs from 'fs';
 import path from 'path';
 
+import ColumnTypeEnum from '@/constants/column-type';
 import { Table } from '@/types/table';
 import StringUtils from '@/utils/string';
-import ColumnTypeEnum from '@/constants/column-type';
+
 import generateCode from '../core';
 
 export default function generateBackend(
