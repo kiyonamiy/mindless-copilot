@@ -1,7 +1,12 @@
 #! /usr/bin/env node
+import chalk from 'chalk';
 import { Command } from 'commander';
+import figlet from 'figlet';
 
 import generateAction from '@/actions/generate';
+
+const artText = figlet.textSync('Mindless Copilot');
+console.log(chalk.hex('#9fdddd').bold(artText));
 
 const program = new Command();
 program
@@ -16,7 +21,6 @@ program
 program
   .command('generate')
   .description('代码生成')
-  .option('-t, --template <value>', 'frontend or backend')
   .option('-d, --dir <value>', '指定项目目录，默认是当前文件夹')
   .action(generateAction);
 

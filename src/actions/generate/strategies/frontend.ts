@@ -6,11 +6,11 @@ import StringUtils from '@/utils/string';
 
 import generateCode from '../core';
 
-export default function generateFrontend(
+export default async function generateFrontend(
   projectRootDir: string,
   tables: Table[],
 ) {
-  tables.forEach((table) => {
+  for (const table of tables) {
     const templateData = {
       index: 0,
       tableName: table.name,
@@ -31,10 +31,10 @@ export default function generateFrontend(
         };
       }),
     };
-    generateCode(
+    await generateCode(
       path.resolve(__dirname, '../../../../templates/frontend'),
       path.resolve(projectRootDir, 'src/'),
       templateData,
     );
-  });
+  }
 }

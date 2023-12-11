@@ -2,12 +2,13 @@ import fs from 'fs';
 import path from 'path';
 
 import ColumnTypeEnum from '@/constants/column-type';
+import Logger from '@/log';
 import { Table } from '@/types/table';
 import StringUtils from '@/utils/string';
 
 import generateCode from '../core';
 
-export default function generateBackend(
+export default async function generateBackend(
   projectRootDir: string,
   tables: Table[],
 ) {
@@ -17,17 +18,20 @@ export default function generateBackend(
     /Application\.java$/,
   );
   if (targetDir == null) {
-    // TODO 报错提示
+    Logger.error(
+      '找不到 src/main/java 下的 Application.java 文件，代码生成终止',
+    );
     return;
   }
   const rootPackageName = path
     .relative(path.resolve(projectRootDir, 'src/main/java'), targetDir)
     .split('/')
     .join('.');
-  tables.forEach((table, index) => {
+  for (let i = 0; i < tables.length; i += 1) {
+    const table = tables[i];
     // 准备数据
     const templateData = {
-      index,
+      index: i,
       tableName: table.name,
       tableComment: table.comment,
       pascalTableName: StringUtils.convertToPascalCase(table.name),
@@ -56,12 +60,12 @@ export default function generateBackend(
       }),
     };
     // 生成代码
-    generateCode(
+    await generateCode(
       path.resolve(__dirname, '../../../../templates/backend'),
       targetDir,
       templateData,
     );
-  });
+  }
 }
 
 /**
