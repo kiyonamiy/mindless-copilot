@@ -4,10 +4,10 @@
 
 ```typescript
 // 后端代码生成
-npx ts-node -r tsconfig-paths/register ./src/index.ts generate -t backend --dir ../energy-hx-backend
+npx ts-node -r tsconfig-paths/register ./src/index.ts generate --dir ../energy-hx-backend
 
 // 前端代码生成
-npx ts-node -r tsconfig-paths/register ./src/index.ts generate -t frontend --dir ./examples/react
+npx ts-node -r tsconfig-paths/register ./src/index.ts generate --dir ./examples/react
 ```
 
 ## 项目开发过程

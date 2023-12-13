@@ -47,18 +47,25 @@ export default async function generate(options: {
     },
   ]);
   // 加载 tables
-  const tables = loadTables(path.resolve(projectRootDir, 'sql/sql.json'));
+  const sqlFilepath = path.resolve(projectRootDir, 'sql/sql.json');
+  let tables: Table[] | null = null;
+  try {
+    tables = loadTables(sqlFilepath);
+  } catch (e) {
+    Logger.error(`请提供正确的 sql 文件, ${sqlFilepath}`);
+    return;
+  }
   // 寻找对应策略
   const generateCode = GenerateCodeStrategyMap[template as TemplateOption];
   // 执行策略，生成代码
-  await generateCode(projectRootDir, tables);
+  await generateCode(projectRootDir, tables!);
 }
 
 /**
  * 从指定文件夹中读取并解析出 tables
  * @returns
  */
-function loadTables(sqlFilepath: string): Table[] {
+function loadTables(sqlFilepath: string): Table[] | null {
   const sqlJson = fs.readFileSync(sqlFilepath, 'utf-8');
   const tables = JSON.parse(sqlJson) as Table[];
   return tables;

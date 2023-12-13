@@ -5,12 +5,14 @@ import figlet from 'figlet';
 
 import generateAction from '@/actions/generate';
 
+import packageJson from '../package.json';
+
 const artText = figlet.textSync('Mindless Copilot');
 console.log(chalk.hex('#9fdddd').bold(artText));
 
 const program = new Command();
 program
-  .version('1.0.0', '-v, --version', 'output the current version')
+  .version(packageJson.version, '-v, --version', 'output the current version')
   .description('小组定制化代码生成');
 // // .option('-l, --ls  [value]', 'List directory contents')
 // // .option('-m, --mkdir <value>', 'Create a directory')
