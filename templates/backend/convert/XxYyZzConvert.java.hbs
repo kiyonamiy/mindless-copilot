@@ -1,0 +1,24 @@
+package {{rootPackageName}}.convert;
+
+import {{rootPackageName}}.domain.dataobject.{{pascalTableName}}DO;
+import {{rootPackageName}}.vo.{{pascalTableName}}CreateReqVO;
+import {{rootPackageName}}.vo.{{pascalTableName}}UpdateReqVO;
+import {{rootPackageName}}.vo.{{pascalTableName}}RespVO;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
+
+import java.util.List;
+
+@Mapper
+public interface {{pascalTableName}}Convert {
+
+    {{pascalTableName}}Convert INSTANCE = Mappers.getMapper({{pascalTableName}}Convert.class);
+
+    {{pascalTableName}}DO convert({{pascalTableName}}CreateReqVO bean);
+
+    {{pascalTableName}}DO convert({{pascalTableName}}UpdateReqVO bean);
+
+    {{pascalTableName}}RespVO convert({{pascalTableName}}DO bean);
+
+    List<{{pascalTableName}}RespVO> convertList(List<{{pascalTableName}}DO> bean);
+}

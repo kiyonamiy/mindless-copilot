@@ -1,18 +1,18 @@
 package {{rootPackageName}}.service;
 
 import javax.annotation.Resource;
-import javax.validation.Valid;
 
 import org.springframework.stereotype.Service;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
-import {{rootPackageName}}.common.page.dto.BasePageVO;
-import com.hyperchain.cb.converter.{{pascalTableName}}Converter;
-import com.hyperchain.cb.domain.dataobject.{{pascalTableName}}DO;
-import com.hyperchain.cb.domain.mapper.{{pascalTableName}}Mapper;
-import com.hyperchain.cb.dto.{{pascalTableName}}ServiceCreateDTO;
-import com.hyperchain.cb.dto.{{pascalTableName}}ServiceCreateRetDTO;
+import {{rootPackageName}}.vo.{{pascalTableName}}CreateReqVO;
+import {{rootPackageName}}.vo.{{pascalTableName}}UpdateReqVO;
+import {{rootPackageName}}.vo.{{pascalTableName}}PageReqVO;
+import {{rootPackageName}}.domain.mapper.{{pascalTableName}}Mapper;
+import {{rootPackageName}}.domain.dataobject.{{pascalTableName}}DO;
+import {{rootPackageName}}.convert.{{pascalTableName}}Convert;
+
+import {{rootPackageName}}.cb.common.page.dto.PageResult;
+
 
 @Service
 public class {{pascalTableName}}ServiceImpl implements {{pascalTableName}}Service {
@@ -20,10 +20,54 @@ public class {{pascalTableName}}ServiceImpl implements {{pascalTableName}}Servic
     private {{pascalTableName}}Mapper {{camelTableName}}Mapper;
 
     @Override
-    public {{pascalTableName}}ServiceCreateRetDTO create{{pascalTableName}}({{pascalTableName}}ServiceCreateDTO {{camelTableName}}ServiceCreateDTO) {
-        {{pascalTableName}}DO {{camelTableName}}DO = {{pascalTableName}}Converter.convert({{camelTableName}}ServiceCreateDTO);
+    public Long create{{pascalTableName}}({{pascalTableName}}CreateReqVO {{camelTableName}}CreateReqVO) {
+        // 1. 检查创建信息
+        checkCreate{{pascalTableName}}({{camelTableName}}CreateReqVO);
+
+        // 2. 写入到数据库中
+        {{pascalTableName}}DO {{camelTableName}}DO = {{pascalTableName}}Convert.INSTANCE.convert({{camelTableName}}CreateReqVO);
         {{camelTableName}}Mapper.insert({{camelTableName}}DO);
-        {{pascalTableName}}ServiceCreateRetDTO {{camelTableName}}ServiceCreateRetDTO = {{pascalTableName}}Converter.convert({{camelTableName}}DO);
-        return {{camelTableName}}ServiceCreateRetDTO;
+        return {{camelTableName}}DO.getId();
+    }
+
+    @Override
+    public void update{{pascalTableName}}({{pascalTableName}}UpdateReqVO {{camelTableName}}UpdateReqVO) {
+        // 1. 检查更新信息
+        checkUpdate{{pascalTableName}}({{camelTableName}}UpdateReqVO);
+
+        // 2. 更新到数据库中
+        {{pascalTableName}}DO {{camelTableName}}DO = {{pascalTableName}}Convert.INSTANCE.convert({{camelTableName}}UpdateReqVO);
+        {{camelTableName}}Mapper.updateById({{camelTableName}}DO);
+    }
+
+    @Override
+    public void delete{{pascalTableName}}(Long id) {
+        // 1. 检查更新信息
+        checkDelete{{pascalTableName}}(id);
+
+        // 2. 从数据库中删除记录
+        {{camelTableName}}Mapper.deleteById(id);
+    }
+
+    @Override
+    public {{pascalTableName}}DO get{{pascalTableName}}(Long id) {
+        return {{camelTableName}}Mapper.selectById(id);
+    }
+
+    @Override
+    public PageResult<{{pascalTableName}}DO> get{{pascalTableName}}Page({{pascalTableName}}PageReqVO {{camelTableName}}PageReqVO) {
+        return {{camelTableName}}Mapper.selectPage({{camelTableName}}PageReqVO);
+    }
+
+    private void checkCreate{{pascalTableName}} ({{pascalTableName}}CreateReqVO {{camelTableName}}CreateReqVO) {
+        // todo 编写创建检查逻辑
+    }
+
+    private void checkUpdate{{pascalTableName}} ({{pascalTableName}}UpdateReqVO {{camelTableName}}UpdateReqVO) {
+        // todo 编写更新检查逻辑
+    }
+
+    private void checkDelete{{pascalTableName}} (Long {{camelTableName}}Id) {
+        // todo 编写删除检查逻辑
     }
 }

@@ -2,18 +2,14 @@ package {{rootPackageName}}.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "{{tableComment}}-创建 VO")
-public class {{pascalTableName}}CreateReqVO {
-    {{#each filterPrimaryKeyColumns}}
-    @Schema(description = "{{this.comment}}")
-    private {{this.type}} {{this.name}};
-    {{/each}}
+@Schema(description = "{{tableComment}}-创建 Req VO")
+@EqualsAndHashCode(callSuper = true)
+public class {{pascalTableName}}CreateReqVO extends {{pascalTableName}}BaseVO {
 }

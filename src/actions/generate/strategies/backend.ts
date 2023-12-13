@@ -34,8 +34,9 @@ export default async function generateBackend(
       index: i,
       tableName: table.name,
       tableComment: table.comment,
+      tableModule: table.module,
       pascalTableName: StringUtils.convertToPascalCase(table.name),
-      camelTableName: StringUtils.convertToPascalCase(table.name),
+      camelTableName: StringUtils.convertToCamelCase(table.name),
       hyphenTableName: StringUtils.convertToHyphenCase(table.name),
       rootPackageName,
       filterPrimaryKeyColumns: table.columns

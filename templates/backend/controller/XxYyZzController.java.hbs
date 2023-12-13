@@ -1,14 +1,14 @@
 package {{rootPackageName}}.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
-import {{rootPackageName}}.common.auth.annotation.PermissionCheck;
-import {{rootPackageName}}.common.page.dto.BasePageVO;
-import com.hyperchain.cb.converter.{{pascalTableName}}Converter;
+import {{rootPackageName}}.cb.common.auth.annotation.PermissionCheck;
+import {{rootPackageName}}.cb.domain.response.Response;
+import {{rootPackageName}}.cb.common.page.dto.PageResult;
+import {{rootPackageName}}.convert.{{pascalTableName}}Convert;
 import {{rootPackageName}}.vo.{{pascalTableName}}CreateReqVO;
-import {{rootPackageName}}.vo.{{pascalTableName}}CreateRespVO;
-import {{rootPackageName}}.domain.response.Response;
-import com.hyperchain.cb.dto.{{pascalTableName}}ServiceCreateDTO;
-import com.hyperchain.cb.dto.{{pascalTableName}}ServiceCreateRetDTO;
+import {{rootPackageName}}.vo.{{pascalTableName}}UpdateReqVO;
+import {{rootPackageName}}.vo.{{pascalTableName}}PageReqVO;
+import {{rootPackageName}}.vo.{{pascalTableName}}RespVO;
+import {{rootPackageName}}.domain.dataobject.{{pascalTableName}}DO;
 import {{rootPackageName}}.service.{{pascalTableName}}Service;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,6 +28,7 @@ import javax.validation.Valid;
 
 @Tag(name = "{{index}}-{{tableComment}}", description = "{{tableComment}}接口")
 @RestController
+// todo 请基于所属模块添加前缀
 @RequestMapping("/{{hyphenTableName}}")
 @Validated
 public class {{pascalTableName}}Controller {
@@ -37,23 +38,14 @@ public class {{pascalTableName}}Controller {
 
     @PostMapping("create")
     @Operation(summary = "创建{{tableComment}}")
-    @PermissionCheck(code = "{{camelTableName}}:create")
-    public Response<{{pascalTableName}}CreateRespVO> create(@Valid @RequestBody {{pascalTableName}}CreateReqVO {{camelTableName}}CreateReqVO) {
-        {{pascalTableName}}ServiceCreateDTO {{camelTableName}}ServiceCreateDTO = {{pascalTableName}}Converter.convert({{camelTableName}}CreateReqVO);
-        {{pascalTableName}}ServiceCreateRetDTO {{camelTableName}}ServiceCreateRetDTO = {{camelTableName}}Service.create{{pascalTableName}}({{camelTableName}}ServiceCreateDTO);
-        {{pascalTableName}}CreateRespVO {{camelTableName}}CreateRespVO = {{pascalTableName}}Converter.convert({{camelTableName}}ServiceCreateRetDTO);
-        return new Response<>({{camelTableName}}CreateRespVO);
-    }
-    {{!-- @GetMapping("page")
-    @Operation(summary = "分页查询{{tableComment}}")
-    @PermissionCheck(code = "{{camelTableName}}:get")
-    public Response<PageDTO<{{pascalTableName}}DO>> get{{pascalTableName}}Page(BasePageVO pageReqVO) {
-        return new Response<>({{camelTableName}}Service.get{{pascalTableName}}Page(pageReqVO));
+    @PermissionCheck(code = "{{tableModule}}:{{camelTableName}}:create")
+    public Response<Long> create(@Valid @RequestBody {{pascalTableName}}CreateReqVO {{camelTableName}}CreateReqVO) {
+        return new Response<>({{camelTableName}}Service.create{{pascalTableName}}({{camelTableName}}CreateReqVO));
     }
 
     @DeleteMapping("delete")
     @Operation(summary = "删除{{tableComment}}")
-    @PermissionCheck(code = "{{camelTableName}}:delete")
+    @PermissionCheck(code = "{{tableModule}}:{{camelTableName}}:delete")
     public Response<Boolean> delete{{pascalTableName}}(@RequestParam("id") Long id) {
         {{camelTableName}}Service.delete{{pascalTableName}}(id);
         return new Response<>(Boolean.TRUE);
@@ -61,16 +53,25 @@ public class {{pascalTableName}}Controller {
 
     @PutMapping("update")
     @Operation(summary = "更新{{tableComment}}")
-    @PermissionCheck(code = "{{camelTableName}}:update")
-    public Response<Boolean> update{{pascalTableName}}(@Valid @RequestBody UpdateDTO updateDTO) {
-        {{camelTableName}}Service.update{{pascalTableName}}(updateDTO);
+    @PermissionCheck(code = "{{tableModule}}:{{camelTableName}}:update")
+    public Response<Boolean> update{{pascalTableName}}(@Valid @RequestBody {{pascalTableName}}UpdateReqVO {{camelTableName}}UpdateReqVO) {
+        {{camelTableName}}Service.update{{pascalTableName}}({{camelTableName}}UpdateReqVO);
         return new Response<>(Boolean.TRUE);
     }
 
     @GetMapping("get")
     @Operation(summary = "获取单个{{tableComment}}")
-    @PermissionCheck(code = "{{camelTableName}}:get")
-    public Response<{{pascalTableName}}DO> get{{pascalTableName}}(GetDTO getDTO) {
-        return new Response<>({{camelTableName}}Service.get{{pascalTableName}}(getDTO));
-    } --}}
+    @PermissionCheck(code = "{{tableModule}}:{{camelTableName}}:get")
+    public Response<{{pascalTableName}}RespVO> get{{pascalTableName}}(@RequestParam("id") Long id) {
+        return new Response<>({{pascalTableName}}Convert.INSTANCE.convert({{camelTableName}}Service.get{{pascalTableName}}(id)));
+    }
+
+    @GetMapping("page")
+    @Operation(summary = "分页查询{{tableComment}}")
+    @PermissionCheck(code = "{{tableModule}}:{{camelTableName}}:get")
+    public Response<PageResult<{{pascalTableName}}RespVO>> get{{pascalTableName}}Page({{pascalTableName}}PageReqVO {{camelTableName}}PageReqVO) {
+        PageResult<{{pascalTableName}}DO> {{camelTableName}}DOPageResult = {{camelTableName}}Service.get{{pascalTableName}}Page({{camelTableName}}PageReqVO);
+        return new Response<>(new PageResult<>({{pascalTableName}}Convert.INSTANCE.convertList({{camelTableName}}DOPageResult.getRecords()),
+            {{camelTableName}}DOPageResult.getTotal(), {{camelTableName}}DOPageResult.getSize(), {{camelTableName}}DOPageResult.getCurrent()));
+    }
 }

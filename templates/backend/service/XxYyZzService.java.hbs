@@ -1,12 +1,20 @@
 package {{rootPackageName}}.service;
 
-import {{rootPackageName}}.dto.{{pascalTableName}}ServiceCreateDTO;
-import {{rootPackageName}}.dto.{{pascalTableName}}ServiceCreateRetDTO;
+import {{rootPackageName}}.vo.{{pascalTableName}}CreateReqVO;
+import {{rootPackageName}}.vo.{{pascalTableName}}UpdateReqVO;
+import {{rootPackageName}}.vo.{{pascalTableName}}PageReqVO;
+import {{rootPackageName}}.domain.dataobject.{{pascalTableName}}DO;
+
+import {{rootPackageName}}.cb.common.page.dto.PageResult;
 
 public interface {{pascalTableName}}Service {
-    {{pascalTableName}}ServiceCreateRetDTO create{{pascalTableName}}({{pascalTableName}}ServiceCreateDTO {{camelTableName}}ServiceCreateDTO);
-    {{!-- PageDTO<{{pascalTableName}}DO> get{{pascalTableName}}Page(BasePageVO pageReqVO);
+    Long create{{pascalTableName}}({{pascalTableName}}CreateReqVO {{camelTableName}}CreateReqVO);
+
+    void update{{pascalTableName}}({{pascalTableName}}UpdateReqVO {{camelTableName}}UpdateReqVO);
+
     void delete{{pascalTableName}}(Long id);
-    void update{{pascalTableName}}(@Valid UpdateDTO updateDTO);
-    {{pascalTableName}}DO get{{pascalTableName}}(GetDTO getDTO); --}}
+
+    {{pascalTableName}}DO get{{pascalTableName}}(Long id);
+
+    PageResult<{{pascalTableName}}DO> get{{pascalTableName}}Page({{pascalTableName}}PageReqVO {{camelTableName}}PageReqVO);
 }
