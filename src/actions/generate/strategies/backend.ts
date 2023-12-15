@@ -39,6 +39,21 @@ export default async function generateBackend(
       camelTableName: StringUtils.convertToCamelCase(table.name),
       hyphenTableName: StringUtils.convertToHyphenCase(table.name),
       rootPackageName,
+      filterPrimaryKeyTimeColumns: table.columns
+        .filter(
+          ({ type, primaryKey, autoIncrement }) =>
+            (type === 'DATETIME' || type === 'TIMESTAMP' || type === 'DATE') &&
+            !primaryKey &&
+            !autoIncrement,
+        )
+        .map(({ comment, name, type }) => ({
+          comment,
+          name,
+          camelName: StringUtils.convertToPascalCase(name),
+          type: type,
+          doType: ColumnTypeEnum[type].javaDOMapping,
+          voType: ColumnTypeEnum[type].javaVOMapping,
+        })),
       filterPrimaryKeyColumns: table.columns
         .filter(
           ({ primaryKey, autoIncrement }) => !primaryKey && !autoIncrement, // 过滤掉主键
@@ -48,7 +63,9 @@ export default async function generateBackend(
             comment,
             name,
             camelName: StringUtils.convertToPascalCase(name),
-            type: ColumnTypeEnum[type].javaMapping,
+            type: type,
+            doType: ColumnTypeEnum[type].javaDOMapping,
+            voType: ColumnTypeEnum[type].javaVOMapping,
           };
         }),
       columns: table.columns.map(({ comment, name, type }) => {
@@ -56,7 +73,9 @@ export default async function generateBackend(
           comment,
           name,
           camelName: StringUtils.convertToPascalCase(name),
-          type: ColumnTypeEnum[type].javaMapping,
+          type: type,
+          doType: ColumnTypeEnum[type].javaDOMapping,
+          voType: ColumnTypeEnum[type].javaVOMapping,
         };
       }),
     };

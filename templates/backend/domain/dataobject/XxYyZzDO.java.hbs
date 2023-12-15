@@ -6,6 +6,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+{{#if filterPrimaryKeyTimeColumns}}
+import java.time.LocalDateTime;
+{{/if}}
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
@@ -15,6 +19,6 @@ public class {{pascalTableName}}DO extends BaseDO {
     /**
      * {{this.comment}}
      */
-    private {{this.type}} {{this.name}};
+    private {{this.doType}} {{this.name}};
     {{/each}}
 }

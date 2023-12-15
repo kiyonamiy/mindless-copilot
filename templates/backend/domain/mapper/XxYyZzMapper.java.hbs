@@ -13,7 +13,7 @@ public interface {{pascalTableName}}Mapper extends BaseMapperX<{{pascalTableName
     default PageResult<{{pascalTableName}}DO> selectPage({{pascalTableName}}PageReqVO {{camelTableName}}PageReqVO) {
        // todo 增加查询条件
         return selectPage({{camelTableName}}PageReqVO,
-            Wrappers.lambdaQuery(SysDictTypeTestDO.class)
+            Wrappers.lambdaQuery({{pascalTableName}}DO.class)
         );
     }
 }
