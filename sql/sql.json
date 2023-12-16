@@ -2,6 +2,7 @@
   {
     "name": "sys_dict_type_test",
     "comment": "字典类型",
+    "module": "sys",
     "columns": [
       {
         "name": "id",

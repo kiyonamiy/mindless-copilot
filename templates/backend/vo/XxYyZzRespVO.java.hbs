@@ -1,0 +1,13 @@
+package {{rootPackageName}}.vo;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+@Data
+@EqualsAndHashCode(callSuper = true)
+@Schema(description = "{{tableComment}}-响应 VO")
+public class {{pascalTableName}}RespVO extends {{pascalTableName}}BaseVO {
+    @Schema(description = "{{tableComment}}ID")
+    private Long id;
+}

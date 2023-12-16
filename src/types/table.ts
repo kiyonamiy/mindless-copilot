@@ -22,4 +22,5 @@ export interface Table {
   name: string;
   columns: TableColumn[];
   comment: string;
+  module: string;
 }

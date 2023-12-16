@@ -1,0 +1,18 @@
+package {{rootPackageName}}.vo;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
+import javax.validation.constraints.NotNull;
+
+@Data
+@NoArgsConstructor
+@Schema(description = "{{tableComment}}-更新 Req VO")
+@EqualsAndHashCode(callSuper = true)
+public class {{pascalTableName}}UpdateReqVO extends {{pascalTableName}}BaseVO {
+
+    @Schema(description = "{{tableComment}}ID")
+    @NotNull(message = "{{this.comment}}ID不能为空")
+    private Long id;
+}

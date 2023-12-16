@@ -1,16 +1,17 @@
 package {{rootPackageName}}.domain.dataobject;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import {{rootPackageName}}.cb.domain.dataobject.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+{{#if filterPrimaryKeyTimeColumns}}
+import java.time.LocalDateTime;
+{{/if}}
+
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
 @TableName(value = "{{tableName}}", autoResultMap = true)
 public class {{pascalTableName}}DO extends BaseDO {
@@ -18,6 +19,6 @@ public class {{pascalTableName}}DO extends BaseDO {
     /**
      * {{this.comment}}
      */
-    private {{this.type}} {{this.name}};
+    private {{this.doType}} {{this.name}};
     {{/each}}
 }

@@ -1,9 +1,19 @@
 package {{rootPackageName}}.domain.mapper;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import {{rootPackageName}}.domain.dataobject.{{pascalTableName}}DO;
-import {{rootPackageName}}.mybatis.mapper.BaseMapperX;
+import {{rootPackageName}}.vo.{{pascalTableName}}PageReqVO;
+import {{rootPackageName}}.cb.mybatis.mapper.BaseMapperX;
+import {{rootPackageName}}.cb.common.page.dto.PageResult;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface {{pascalTableName}}Mapper extends BaseMapperX<{{pascalTableName}}DO> {
+
+    default PageResult<{{pascalTableName}}DO> selectPage({{pascalTableName}}PageReqVO {{camelTableName}}PageReqVO) {
+       // todo 增加查询条件
+        return selectPage({{camelTableName}}PageReqVO,
+            Wrappers.lambdaQuery({{pascalTableName}}DO.class)
+        );
+    }
 }

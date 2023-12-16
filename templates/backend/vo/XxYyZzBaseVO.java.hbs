@@ -1,0 +1,18 @@
+package {{rootPackageName}}.vo;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import javax.validation.constraints.NotNull;
+
+@Data
+@NoArgsConstructor
+@Schema(description = "{{tableComment}}-基础 VO")
+public class {{pascalTableName}}BaseVO {
+    {{#each filterPrimaryKeyColumns}}
+    @Schema(description = "{{this.comment}}")
+    @NotNull(message = "{{this.comment}}不能为空")
+    private {{this.voType}} {{this.name}};
+
+    {{/each}}
+}
