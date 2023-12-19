@@ -14,7 +14,7 @@ public class {{pascalTableName}}PageReqVO extends BasePageVO {
 
     {{#each filterPrimaryKeyColumns}}
     @Schema(description = "{{this.comment}}")
-    private {{this.voType}} {{this.name}};
+    private {{this.voType}} {{this.camelName}};
 
     {{/each}}
 }

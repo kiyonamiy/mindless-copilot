@@ -49,7 +49,7 @@ export default async function generateBackend(
         .map(({ comment, name, type }) => ({
           comment,
           name,
-          camelName: StringUtils.convertToPascalCase(name),
+          camelName: StringUtils.convertToCamelCase(name),
           type: type,
           doType: ColumnTypeEnum[type].javaDOMapping,
           voType: ColumnTypeEnum[type].javaVOMapping,
@@ -62,7 +62,7 @@ export default async function generateBackend(
           return {
             comment,
             name,
-            camelName: StringUtils.convertToPascalCase(name),
+            camelName: StringUtils.convertToCamelCase(name),
             type: type,
             doType: ColumnTypeEnum[type].javaDOMapping,
             voType: ColumnTypeEnum[type].javaVOMapping,
@@ -72,7 +72,7 @@ export default async function generateBackend(
         return {
           comment,
           name,
-          camelName: StringUtils.convertToPascalCase(name),
+          camelName: StringUtils.convertToCamelCase(name),
           type: type,
           doType: ColumnTypeEnum[type].javaDOMapping,
           voType: ColumnTypeEnum[type].javaVOMapping,
