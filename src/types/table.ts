@@ -4,6 +4,7 @@ type TableColumnType = keyof typeof ColumnTypeEnum;
 
 // 表每列定义
 export interface TableColumn {
+  // 数据库设计时需要
   name: string;
   type: TableColumnType;
   comment?: string;
@@ -15,6 +16,13 @@ export interface TableColumn {
   unsigned?: boolean;
   zeroFill?: boolean;
   autoIncrement?: boolean;
+
+  // 额外补充
+  createRequired: boolean;
+  updateRequired: boolean;
+  pageQuery: boolean;
+  pageItemRespInclude: boolean;
+  detailRespInclude: boolean;
 }
 
 // 表定义
