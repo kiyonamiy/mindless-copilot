@@ -23,6 +23,9 @@ export default async function generateCode(
     hyphenTableName: string;
     pascalTableName: string;
   } & Record<string, unknown>,
+  options: {
+    overwrite?: boolean;
+  },
 ) {
   const files = fs.readdirSync(templateDir);
   // 遍历模板文件夹
@@ -43,7 +46,7 @@ export default async function generateCode(
       } else {
         fs.mkdirSync(nextTargetDir, { recursive: true });
       }
-      await generateCode(tempFilepath, nextTargetDir, data);
+      await generateCode(tempFilepath, nextTargetDir, data, options);
     } else if (stats.isFile()) {
       let targetFilepath = path.resolve(targetDir, targetFilename);
       // 判断文件是否已经存在（是否需要做覆盖）
@@ -52,17 +55,25 @@ export default async function generateCode(
           ? targetFilepath.slice(0, -HBS_EXT.length)
           : targetFilepath;
         if (fs.existsSync(targetFilepathTemp)) {
-          Logger.warn(`文件已经存在：${targetFilepathTemp}`);
-          const { overwrite } = await inquirer.prompt([
-            {
-              type: 'confirm',
-              name: 'overwrite',
-              message: '文件已经存在，是否覆盖该文件？',
-              default: true,
-            },
-          ]);
-          if (!overwrite) {
-            return;
+          Logger.warn(
+            `文件已经存在${
+              options.overwrite && '(直接覆盖)'
+            }：${targetFilepathTemp}`,
+          );
+          // 不直接覆盖，则询问
+          if (!options.overwrite) {
+            const result = await inquirer.prompt([
+              {
+                type: 'confirm',
+                name: 'overwrite',
+                message: '文件已经存在，是否覆盖该文件？',
+                default: true,
+              },
+            ]);
+            // 不覆盖则返回
+            if (!result.overwrite) {
+              return;
+            }
           }
         }
       }

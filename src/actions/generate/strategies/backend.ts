@@ -11,6 +11,9 @@ import generateCode from '../core';
 export default async function generateBackend(
   projectRootDir: string,
   tables: Table[],
+  options: {
+    overwrite?: boolean;
+  },
 ) {
   // 以 XxxApplication.java 所在的文件夹为“生成代码”的根路径
   const targetDir = findDirContainingFile(
@@ -84,6 +87,7 @@ export default async function generateBackend(
       path.resolve(__dirname, '../../../../templates/backend'),
       targetDir,
       templateData,
+      options,
     );
   }
 }

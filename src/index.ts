@@ -26,6 +26,7 @@ program
   .option('-d, --dir <value>', '指定项目目录，默认是当前文件夹')
   .option('-t, --template <value>', '指定模板')
   .option('--excel <value>', '指定生成代码的描述结构的 excel 文件')
+  .option('--overwrite', '直接覆盖已存在的文件')
   .action(generateAction);
 
 program.parse(process.argv);

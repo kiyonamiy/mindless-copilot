@@ -9,6 +9,9 @@ import generateCode from '../core';
 export default async function generateFrontend(
   projectRootDir: string,
   tables: Table[],
+  options: {
+    overwrite?: boolean;
+  },
 ) {
   for (const table of tables) {
     const templateData = {
@@ -35,6 +38,7 @@ export default async function generateFrontend(
       path.resolve(__dirname, '../../../../templates/frontend'),
       path.resolve(projectRootDir, 'src/'),
       templateData,
+      options,
     );
   }
 }

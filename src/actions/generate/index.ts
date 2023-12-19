@@ -16,7 +16,11 @@ type TemplateOption = (typeof TEMPLATE_OPTIONS)[number];
 // 生成代码策略
 const GenerateCodeStrategyMap: Record<
   TemplateOption,
-  (projectRootDir: string, tables: Table[]) => Promise<void>
+  (
+    projectRootDir: string,
+    tables: Table[],
+    options: Record<string, unknown>,
+  ) => Promise<void>
 > = {
   frontend: generateFrontend,
   backend: generateBackend,
@@ -26,8 +30,13 @@ export default async function generate(options: {
   template?: TemplateOption | string;
   dir?: string;
   excel?: string;
+  overwrite?: boolean;
 }) {
-  Logger.info("当前正在执行 'generate' 指令");
+  Logger.info(
+    `当前正在执行 'generate' 指令${
+      options.overwrite && '（直接覆盖已有文件）'
+    }`,
+  );
   Logger.info("建议：请将其他代码提交后再执行 'generate' 指令");
 
   if (options.dir == null) {
@@ -64,21 +73,23 @@ export default async function generate(options: {
   // 加载 tables
   const excelFilepath = path.resolve(projectRootDir, options.excel);
   let tables: Table[] | null = null;
-  // try {
-  tables = loadTables(excelFilepath);
-  //   if (tables == null) {
-  //     throw new Error();
-  //   }
-  // } catch (e) {
-  //   Logger.error(
-  //     `请提供正确的生成代码的描述结构的 excel 文件, ${excelFilepath}`,
-  //   );
-  //   return;
-  // }
+  try {
+    tables = loadTables(excelFilepath);
+    if (tables == null) {
+      throw new Error();
+    }
+  } catch (e) {
+    Logger.error(
+      `请提供正确的生成代码的描述结构的 excel 文件, ${excelFilepath}`,
+    );
+    return;
+  }
   // 寻找对应策略
   const generateCode = GenerateCodeStrategyMap[template as TemplateOption];
   // 执行策略，生成代码
-  await generateCode(projectRootDir, tables!);
+  await generateCode(projectRootDir, tables!, {
+    overwrite: !!options.overwrite,
+  });
 }
 
 /**

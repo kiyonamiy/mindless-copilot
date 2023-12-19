@@ -4,7 +4,7 @@
 
 ```typescript
 // 后端代码生成
-npx ts-node -r tsconfig-paths/register ./src/index.ts generate --dir ../energy-hx-backend
+npx ts-node -r tsconfig-paths/register ./src/index.ts generate --dir YOUR/DIR/PATH --excel YOUR/EXCEL/PATH --template backend
 
 // 前端代码生成
 npx ts-node -r tsconfig-paths/register ./src/index.ts generate --dir ./examples/react
