@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import { Command } from 'commander';
 import figlet from 'figlet';
 
+import ddlAction from '@/actions/ddl';
 import generateAction from '@/actions/generate';
 
 import packageJson from '../package.json';
@@ -28,5 +29,12 @@ program
   .option('--excel <value>', '指定生成代码的描述结构的 excel 文件')
   .option('--overwrite', '直接覆盖已存在的文件')
   .action(generateAction);
+
+program
+  .command('ddl')
+  .description('根据 excel 文件生成 ddl 脚本')
+  .option('--excel <value>', 'excel 文件路径')
+  .option('--output <value>', '输出文件路径')
+  .action(ddlAction);
 
 program.parse(process.argv);

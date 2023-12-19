@@ -8,6 +8,9 @@ npx ts-node -r tsconfig-paths/register ./src/index.ts generate --dir YOUR/DIR/PA
 
 // 前端代码生成
 npx ts-node -r tsconfig-paths/register ./src/index.ts generate --dir ./examples/react
+
+// ddl 生成
+npx ts-node -r tsconfig-paths/register ./src/index.ts ddl --excel YOUR/EXCEL/PATH
 ```
 
 ## 项目开发过程
