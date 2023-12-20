@@ -1,33 +1,20 @@
-import fs from 'fs';
 import path from 'path';
 
 import ColumnTypeEnum from '@/constants/column-type';
-import Logger from '@/log';
 import { Table } from '@/types/table';
 import StringUtils from '@/utils/string';
 
 import generateCode from '../core';
 
 export default async function generateBackend(
-  projectRootDir: string,
+  rootDir: string,
   tables: Table[],
   options: {
     overwrite?: boolean;
   },
 ) {
-  // 以 XxxApplication.java 所在的文件夹为“生成代码”的根路径
-  const targetDir = findDirContainingFile(
-    path.resolve(projectRootDir, 'src/main/java'),
-    /Application\.java$/,
-  );
-  if (targetDir == null) {
-    Logger.error(
-      '找不到 src/main/java 下的 Application.java 文件，代码生成终止',
-    );
-    return;
-  }
   const rootPackageName = path
-    .relative(path.resolve(projectRootDir, 'src/main/java'), targetDir)
+    .relative(path.resolve(rootDir, 'src/main/java'), rootDir)
     .split('/')
     .join('.');
   for (let i = 0; i < tables.length; i += 1) {
@@ -85,40 +72,40 @@ export default async function generateBackend(
     // 生成代码
     await generateCode(
       path.resolve(__dirname, '../../../../templates/backend'),
-      targetDir,
+      rootDir,
       templateData,
       options,
     );
   }
 }
 
-/**
- * 查找包含“指定文件”的文件夹
- * @param directory 寻找起点
- * @param fileName 所要寻找的文件名
- */
+// /**
+//  * 查找包含“指定文件”的文件夹
+//  * @param directory 寻找起点
+//  * @param fileName 所要寻找的文件名
+//  */
 
-function findDirContainingFile(
-  directory: string,
-  regex: RegExp,
-): string | null {
-  const files = fs.readdirSync(directory);
+// function findDirContainingFile(
+//   directory: string,
+//   regex: RegExp,
+// ): string | null {
+//   const files = fs.readdirSync(directory);
 
-  for (const file of files) {
-    const filePath = path.join(directory, file);
-    const stats = fs.statSync(filePath);
+//   for (const file of files) {
+//     const filePath = path.join(directory, file);
+//     const stats = fs.statSync(filePath);
 
-    if (stats.isDirectory()) {
-      // 如果是目录，则递归调用
-      const foundFolder = findDirContainingFile(filePath, regex);
-      if (foundFolder) {
-        return foundFolder; // 如果在子目录中找到了包含指定文件的文件夹，直接返回
-      }
-    } else if (stats.isFile() && regex.test(file)) {
-      // 如果是文件，并且文件名匹配正则表达式，则返回包含该文件的文件夹路径
-      return directory;
-    }
-  }
+//     if (stats.isDirectory()) {
+//       // 如果是目录，则递归调用
+//       const foundFolder = findDirContainingFile(filePath, regex);
+//       if (foundFolder) {
+//         return foundFolder; // 如果在子目录中找到了包含指定文件的文件夹，直接返回
+//       }
+//     } else if (stats.isFile() && regex.test(file)) {
+//       // 如果是文件，并且文件名匹配正则表达式，则返回包含该文件的文件夹路径
+//       return directory;
+//     }
+//   }
 
-  return null; // 如果没有找到匹配文件，返回 null
-}
+//   return null; // 如果没有找到匹配文件，返回 null
+// }

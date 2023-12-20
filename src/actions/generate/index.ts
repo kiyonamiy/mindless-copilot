@@ -15,7 +15,7 @@ type TemplateOption = (typeof TEMPLATE_OPTIONS)[number];
 const GenerateCodeStrategyMap: Record<
   TemplateOption,
   (
-    projectRootDir: string,
+    rootDir: string,
     tables: Table[],
     options: Record<string, unknown>,
   ) => Promise<void>

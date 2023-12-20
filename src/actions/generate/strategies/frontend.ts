@@ -7,7 +7,7 @@ import StringUtils from '@/utils/string';
 import generateCode from '../core';
 
 export default async function generateFrontend(
-  projectRootDir: string,
+  rootDir: string,
   tables: Table[],
   options: {
     overwrite?: boolean;
@@ -36,7 +36,7 @@ export default async function generateFrontend(
     };
     await generateCode(
       path.resolve(__dirname, '../../../../templates/frontend'),
-      path.resolve(projectRootDir, 'src/'),
+      rootDir,
       templateData,
       options,
     );
