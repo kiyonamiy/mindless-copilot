@@ -11,14 +11,18 @@ const FileUtils = {
    */
   loadTables(excelFilepath: string): Table[] | null {
     try {
-      const TABLE_INFO_ROWS = 6;
+      // 闭开区间
+      const TABLE_COL_START_INDEX = 19;
+      const BASIC_INFO_INDEX = [0, 4];
+      const FILE_PATH_MAP_INDEX_RANGE = [7, 13];
+
       const excelFileContent = fs.readFileSync(excelFilepath);
       // 解析 Excel 文件
       const workbook = xlsx.read(excelFileContent, { type: 'buffer' });
       // 获取第一个工作表（通常为 Sheet1）
       const firstSheetName = workbook.SheetNames[0]; // TODO
       const worksheet = workbook.Sheets[firstSheetName];
-      // 将工作表转换为 JSON 对象
+      // 解析“列信息”
       const excelColumns: {
         Name: string;
         Type: TableColumn['type'];
@@ -37,9 +41,8 @@ const FileUtils = {
         ['分页结果包含']: boolean;
         ['详情结果包含']: boolean; // TODO 类型抽离
       }[] = xlsx.utils.sheet_to_json(worksheet, {
-        range: TABLE_INFO_ROWS,
+        range: TABLE_COL_START_INDEX,
       });
-
       const columns: TableColumn[] = excelColumns.map((item) => ({
         name: item.Name,
         type: item.Type,
@@ -59,29 +62,50 @@ const FileUtils = {
         detailRespInclude: item['详情结果包含'],
       }));
 
-      // 将工作表转换为 JSON 对象，仅包括指定行范围
-      const excelTableInfo = xlsx.utils
+      const excelTableBasicInfo = xlsx.utils
         .sheet_to_csv(worksheet)
         .split('\n')
-        .slice(0, TABLE_INFO_ROWS) // 前六行
+        .slice(...BASIC_INFO_INDEX)
         .map((row) => row.split(',').filter((str) => !!str))
         .filter((row) => !!row?.length) as [
         ['表名', string],
         ['表中文名', string],
         ['所属模块', string],
+        ['根包名', string],
       ];
 
-      // TODO 解析错误的情况
+      const excelFilepathMap = xlsx.utils
+        .sheet_to_csv(worksheet)
+        .split('\n')
+        .slice(...FILE_PATH_MAP_INDEX_RANGE)
+        .map((row) => row.split(',').filter((str) => !!str))
+        .filter((row) => !!row?.length) as [
+        ['controller', string],
+        ['vo', string],
+        ['service', string],
+        ['domain', string],
+        ['convert', string],
+      ];
 
-      return [
+      const result = [
         {
-          name: excelTableInfo[0][1],
-          comment: excelTableInfo[1][1],
           columns,
-          module: excelTableInfo[2][1],
+          name: excelTableBasicInfo[0][1],
+          comment: excelTableBasicInfo[1][1],
+          module: excelTableBasicInfo[2][1],
+          rootPackageName: excelTableBasicInfo[3][1],
+          filepathMap: excelFilepathMap.reduce(
+            (prev, curRow) => ({
+              ...prev,
+              [curRow[0]]: curRow[1],
+            }),
+            {},
+          ),
         },
       ];
+      return result;
     } catch (e) {
+      console.log(e);
       Logger.error(
         `请提供正确的生成代码的描述结构的 excel 文件, ${excelFilepath}`,
       );

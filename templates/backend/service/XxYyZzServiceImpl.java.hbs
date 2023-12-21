@@ -1,15 +1,15 @@
-package {{rootPackageName}}.service;
+package {{rootPackageName}}.{{servicePackageName}};
 
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
-import {{rootPackageName}}.vo.{{pascalTableName}}CreateReqVO;
-import {{rootPackageName}}.vo.{{pascalTableName}}UpdateReqVO;
-import {{rootPackageName}}.vo.{{pascalTableName}}PageReqVO;
-import {{rootPackageName}}.domain.mapper.{{pascalTableName}}Mapper;
-import {{rootPackageName}}.domain.dataobject.{{pascalTableName}}DO;
-import {{rootPackageName}}.convert.{{pascalTableName}}Convert;
+import {{rootPackageName}}.{{voPackageName}}.{{pascalTableName}}CreateReqVO;
+import {{rootPackageName}}.{{voPackageName}}.{{pascalTableName}}UpdateReqVO;
+import {{rootPackageName}}.{{voPackageName}}.{{pascalTableName}}PageReqVO;
+import {{rootPackageName}}.{{domainPackageName}}.mapper.{{pascalTableName}}Mapper;
+import {{rootPackageName}}.{{domainPackageName}}.dataobject.{{pascalTableName}}DO;
+import {{rootPackageName}}.{{convertPackageName}}.{{pascalTableName}}Convert;
 
 import {{rootPackageName}}.cb.common.page.dto.PageResult;
 

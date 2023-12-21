@@ -83,7 +83,8 @@ function tableToDDL(table: Table): string {
   const columnsDDL = table.columns.map(columnToDDL).join(',\n');
   const primaryKey = table.columns.find((column) => column.primaryKey);
 
-  let ddl = `CREATE TABLE \`${table.name}\` (\n${columnsDDL}`;
+  let ddl = `-- DROP TABLE IF EXISTS \`${table.name}\`; \n\n`;
+  ddl += `CREATE TABLE IF NOT EXISTS \`${table.name}\` (\n${columnsDDL}`;
 
   if (primaryKey) {
     ddl += `,\n    PRIMARY KEY (\`${primaryKey.name}\`)`;

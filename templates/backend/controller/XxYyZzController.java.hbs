@@ -1,15 +1,15 @@
-package {{rootPackageName}}.controller;
+package {{rootPackageName}}.{{controllerPackageName}};
 
 import {{rootPackageName}}.cb.common.auth.annotation.PermissionCheck;
 import {{rootPackageName}}.cb.domain.response.Response;
 import {{rootPackageName}}.cb.common.page.dto.PageResult;
-import {{rootPackageName}}.convert.{{pascalTableName}}Convert;
-import {{rootPackageName}}.vo.{{pascalTableName}}CreateReqVO;
-import {{rootPackageName}}.vo.{{pascalTableName}}UpdateReqVO;
-import {{rootPackageName}}.vo.{{pascalTableName}}PageReqVO;
-import {{rootPackageName}}.vo.{{pascalTableName}}RespVO;
-import {{rootPackageName}}.domain.dataobject.{{pascalTableName}}DO;
-import {{rootPackageName}}.service.{{pascalTableName}}Service;
+import {{rootPackageName}}.{{convertPackageName}}.{{pascalTableName}}Convert;
+import {{rootPackageName}}.{{voPackageName}}.{{pascalTableName}}CreateReqVO;
+import {{rootPackageName}}.{{voPackageName}}.{{pascalTableName}}UpdateReqVO;
+import {{rootPackageName}}.{{voPackageName}}.{{pascalTableName}}PageReqVO;
+import {{rootPackageName}}.{{voPackageName}}.{{pascalTableName}}RespVO;
+import {{rootPackageName}}.{{domainPackageName}}.dataobject.{{pascalTableName}}DO;
+import {{rootPackageName}}.{{servicePackageName}}.{{pascalTableName}}Service;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -18,9 +18,9 @@ export default async function generateFrontend(
       index: 0,
       tableName: table.name,
       tableComment: table.comment,
-      camelTableName: StringUtils.convertToCamelCase(table.name),
-      hyphenTableName: StringUtils.convertToHyphenCase(table.name),
-      pascalTableName: StringUtils.convertToPascalCase(table.name),
+      camelTableName: StringUtils.UNDERSCORE.convertToCamelCase(table.name),
+      hyphenTableName: StringUtils.UNDERSCORE.convertToHyphenCase(table.name),
+      pascalTableName: StringUtils.UNDERSCORE.convertToPascalCase(table.name),
       tableColumns: table.columns.map((column) => {
         return {
           title: column.comment,

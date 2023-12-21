@@ -13,10 +13,6 @@ export default async function generateBackend(
     overwrite?: boolean;
   },
 ) {
-  const rootPackageName = path
-    .relative(path.resolve(rootDir, 'src/main/java'), rootDir)
-    .split('/')
-    .join('.');
   for (let i = 0; i < tables.length; i += 1) {
     const table = tables[i];
     // 准备数据
@@ -25,10 +21,27 @@ export default async function generateBackend(
       tableName: table.name,
       tableComment: table.comment,
       tableModule: table.module,
-      pascalTableName: StringUtils.convertToPascalCase(table.name),
-      camelTableName: StringUtils.convertToCamelCase(table.name),
-      hyphenTableName: StringUtils.convertToHyphenCase(table.name),
-      rootPackageName,
+      pascalTableName: StringUtils.UNDERSCORE.convertToPascalCase(table.name),
+      camelTableName: StringUtils.UNDERSCORE.convertToCamelCase(table.name),
+      hyphenTableName: StringUtils.UNDERSCORE.convertToHyphenCase(table.name),
+      // java 包数据
+      rootPackageName: table.rootPackageName,
+      controllerPackageName: StringUtils.SLASH.convertToDotCase(
+        table.filepathMap.controller || 'controller',
+      ),
+      voPackageName: StringUtils.SLASH.convertToDotCase(
+        table.filepathMap.vo || 'vo',
+      ),
+      servicePackageName: StringUtils.SLASH.convertToDotCase(
+        table.filepathMap.service || 'service',
+      ),
+      domainPackageName: StringUtils.SLASH.convertToDotCase(
+        table.filepathMap.domain || 'domain',
+      ),
+      convertPackageName: StringUtils.SLASH.convertToDotCase(
+        table.filepathMap.convert || 'convert',
+      ),
+      // 列数据
       filterPrimaryKeyTimeColumns: table.columns
         .filter(
           ({ type, primaryKey, autoIncrement }) =>
@@ -39,7 +52,7 @@ export default async function generateBackend(
         .map(({ comment, name, type }) => ({
           comment,
           name,
-          camelName: StringUtils.convertToCamelCase(name),
+          camelName: StringUtils.UNDERSCORE.convertToCamelCase(name),
           type: type,
           doType: ColumnTypeEnum[type].javaDOMapping,
           voType: ColumnTypeEnum[type].javaVOMapping,
@@ -52,7 +65,7 @@ export default async function generateBackend(
           return {
             comment,
             name,
-            camelName: StringUtils.convertToCamelCase(name),
+            camelName: StringUtils.UNDERSCORE.convertToCamelCase(name),
             type: type,
             doType: ColumnTypeEnum[type].javaDOMapping,
             voType: ColumnTypeEnum[type].javaVOMapping,
@@ -62,7 +75,7 @@ export default async function generateBackend(
         return {
           comment,
           name,
-          camelName: StringUtils.convertToCamelCase(name),
+          camelName: StringUtils.UNDERSCORE.convertToCamelCase(name),
           type: type,
           doType: ColumnTypeEnum[type].javaDOMapping,
           voType: ColumnTypeEnum[type].javaVOMapping,
@@ -74,7 +87,10 @@ export default async function generateBackend(
       path.resolve(__dirname, '../../../../templates/backend'),
       rootDir,
       templateData,
-      options,
+      {
+        ...options,
+        filepathMap: table.filepathMap,
+      },
     );
   }
 }

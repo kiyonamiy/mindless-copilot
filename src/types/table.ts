@@ -31,4 +31,6 @@ export interface Table {
   columns: TableColumn[];
   comment: string;
   module: string;
+  rootPackageName: string;
+  filepathMap: Record<string, string>;
 }
