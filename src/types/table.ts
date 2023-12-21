@@ -32,5 +32,6 @@ export interface Table {
   comment: string;
   module: string;
   rootPackageName: string;
+  apiPrefix: string;
   filepathMap: Record<string, string>;
 }

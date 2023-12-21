@@ -28,8 +28,7 @@ import javax.validation.Valid;
 
 @Tag(name = "{{index}}-{{tableComment}}", description = "{{tableComment}}接口")
 @RestController
-// todo 请基于所属模块添加前缀
-@RequestMapping("/{{hyphenTableName}}")
+@RequestMapping("{{apiPrefix}}")
 @Validated
 public class {{pascalTableName}}Controller {
 

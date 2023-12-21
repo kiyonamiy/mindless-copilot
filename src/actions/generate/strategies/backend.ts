@@ -21,9 +21,16 @@ export default async function generateBackend(
       tableName: table.name,
       tableComment: table.comment,
       tableModule: table.module,
-      pascalTableName: StringUtils.UNDERSCORE.convertToPascalCase(table.name),
-      camelTableName: StringUtils.UNDERSCORE.convertToCamelCase(table.name),
-      hyphenTableName: StringUtils.UNDERSCORE.convertToHyphenCase(table.name),
+      apiPrefix: table.apiPrefix,
+      pascalTableName: StringUtils.UNDERSCORE.convertToPascalCase(
+        getTableNameWithoutModule(table.name, table.module),
+      ),
+      camelTableName: StringUtils.UNDERSCORE.convertToCamelCase(
+        getTableNameWithoutModule(table.name, table.module),
+      ),
+      hyphenTableName: StringUtils.UNDERSCORE.convertToHyphenCase(
+        getTableNameWithoutModule(table.name, table.module),
+      ),
       // java 包数据
       rootPackageName: table.rootPackageName,
       controllerPackageName: StringUtils.SLASH.convertToDotCase(
@@ -94,6 +101,16 @@ export default async function generateBackend(
     );
   }
 }
+
+const getTableNameWithoutModule = (tableName: string, moduleName?: string) => {
+  if (moduleName == null) {
+    return tableName;
+  }
+  if (tableName.startsWith(moduleName)) {
+    return tableName.substring(moduleName.length + 1);
+  }
+  return tableName;
+};
 
 // /**
 //  * 查找包含“指定文件”的文件夹

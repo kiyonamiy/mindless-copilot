@@ -13,7 +13,7 @@ const FileUtils = {
     try {
       // 闭开区间
       const TABLE_COL_START_INDEX = 19;
-      const BASIC_INFO_INDEX = [0, 4];
+      const BASIC_INFO_INDEX = [0, 5];
       const FILE_PATH_MAP_INDEX_RANGE = [7, 13];
 
       const excelFileContent = fs.readFileSync(excelFilepath);
@@ -72,6 +72,7 @@ const FileUtils = {
         ['表中文名', string],
         ['所属模块', string],
         ['根包名', string],
+        ['请求前缀', string],
       ];
 
       const excelFilepathMap = xlsx.utils
@@ -94,6 +95,7 @@ const FileUtils = {
           comment: excelTableBasicInfo[1][1],
           module: excelTableBasicInfo[2][1],
           rootPackageName: excelTableBasicInfo[3][1],
+          apiPrefix: excelTableBasicInfo[4][1],
           filepathMap: excelFilepathMap.reduce(
             (prev, curRow) => ({
               ...prev,
@@ -105,7 +107,6 @@ const FileUtils = {
       ];
       return result;
     } catch (e) {
-      console.log(e);
       Logger.error(
         `请提供正确的生成代码的描述结构的 excel 文件, ${excelFilepath}`,
       );
