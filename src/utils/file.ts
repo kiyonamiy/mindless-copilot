@@ -13,8 +13,8 @@ const FileUtils = {
     try {
       // 闭开区间
       const TABLE_COL_START_INDEX = 19;
-      const BASIC_INFO_INDEX = [0, 5];
-      const FILE_PATH_MAP_INDEX_RANGE = [7, 13];
+      const BASIC_INFO_INDEX = [0, 6];
+      const FILE_PATH_MAP_INDEX_RANGE = [11, 17];
 
       const excelFileContent = fs.readFileSync(excelFilepath);
       // 解析 Excel 文件
@@ -68,6 +68,7 @@ const FileUtils = {
         .slice(...BASIC_INFO_INDEX)
         .map((row) => row.split(',').filter((str) => !!str))
         .filter((row) => !!row?.length) as [
+        ['编号', string],
         ['表名', string],
         ['表中文名', string],
         ['所属模块', string],
@@ -88,14 +89,15 @@ const FileUtils = {
         ['convert', string],
       ];
 
-      const result = [
+      const result: Table[] = [
         {
           columns,
-          name: excelTableBasicInfo[0][1],
-          comment: excelTableBasicInfo[1][1],
-          module: excelTableBasicInfo[2][1],
-          rootPackageName: excelTableBasicInfo[3][1],
-          apiPrefix: excelTableBasicInfo[4][1],
+          no: excelTableBasicInfo[0][1],
+          name: excelTableBasicInfo[1][1],
+          comment: excelTableBasicInfo[2][1],
+          module: excelTableBasicInfo[3][1],
+          rootPackageName: excelTableBasicInfo[4][1],
+          apiPrefix: excelTableBasicInfo[5][1],
           filepathMap: excelFilepathMap.reduce(
             (prev, curRow) => ({
               ...prev,

@@ -25,8 +25,17 @@ export interface TableColumn {
   detailRespInclude: boolean;
 }
 
+export interface AdvancedTableColumn extends TableColumn {
+  camelName: string;
+  pascalName: string;
+  upperName: string;
+  doType: string;
+  voType: string;
+}
+
 // 表定义
 export interface Table {
+  no: string;
   name: string;
   columns: TableColumn[];
   comment: string;

@@ -9,9 +9,11 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Schema(description = "{{tableComment}}-基础 VO")
 public class {{pascalTableName}}BaseVO {
-    {{#each filterPrimaryKeyColumns}}
+    {{#each baseColumns}}
     @Schema(description = "{{this.comment}}")
+    {{#notColumnNull this}}
     @NotNull(message = "{{this.comment}}不能为空")
+    {{/notColumnNull}}
     private {{this.voType}} {{this.camelName}};
 
     {{/each}}

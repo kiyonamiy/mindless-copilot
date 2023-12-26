@@ -6,9 +6,9 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@Schema(description = "{{tableComment}}-响应 VO")
-public class {{pascalTableName}}RespVO extends {{pascalTableName}}BaseVO {
-    {{#each detailRespIncludeColumns}}
+@Schema(description = "{{tableComment}}-分页单条记录 VO")
+public class {{pascalTableName}}PageItemRespVO extends {{pascalTableName}}BaseVO {
+    {{#each pageItemRespIncludeColumns}}
     @Schema(description = "{{this.comment}}")
     private {{this.voType}} {{this.camelName}};
 

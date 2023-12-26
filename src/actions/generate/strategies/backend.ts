@@ -1,7 +1,7 @@
 import path from 'path';
 
 import ColumnTypeEnum from '@/constants/column-type';
-import { Table } from '@/types/table';
+import { AdvancedTableColumn, Table } from '@/types/table';
 import StringUtils from '@/utils/string';
 
 import generateCode from '../core';
@@ -15,21 +15,26 @@ export default async function generateBackend(
 ) {
   for (let i = 0; i < tables.length; i += 1) {
     const table = tables[i];
+    const tableNameWithoutPrefix = getTableNameWithoutModule(
+      table.name,
+      table.module,
+    );
     // 准备数据
     const templateData = {
-      index: i,
+      tableNo: table.no,
       tableName: table.name,
       tableComment: table.comment,
       tableModule: table.module,
       apiPrefix: table.apiPrefix,
+      uppercaseTableName: tableNameWithoutPrefix.toUpperCase(),
       pascalTableName: StringUtils.UNDERSCORE.convertToPascalCase(
-        getTableNameWithoutModule(table.name, table.module),
+        tableNameWithoutPrefix,
       ),
       camelTableName: StringUtils.UNDERSCORE.convertToCamelCase(
-        getTableNameWithoutModule(table.name, table.module),
+        tableNameWithoutPrefix,
       ),
       hyphenTableName: StringUtils.UNDERSCORE.convertToHyphenCase(
-        getTableNameWithoutModule(table.name, table.module),
+        tableNameWithoutPrefix,
       ),
       // java 包数据
       rootPackageName: table.rootPackageName,
@@ -49,45 +54,7 @@ export default async function generateBackend(
         table.filepathMap.convert || 'convert',
       ),
       // 列数据
-      filterPrimaryKeyTimeColumns: table.columns
-        .filter(
-          ({ type, primaryKey, autoIncrement }) =>
-            (type === 'DATETIME' || type === 'TIMESTAMP' || type === 'DATE') &&
-            !primaryKey &&
-            !autoIncrement,
-        )
-        .map(({ comment, name, type }) => ({
-          comment,
-          name,
-          camelName: StringUtils.UNDERSCORE.convertToCamelCase(name),
-          type: type,
-          doType: ColumnTypeEnum[type].javaDOMapping,
-          voType: ColumnTypeEnum[type].javaVOMapping,
-        })),
-      filterPrimaryKeyColumns: table.columns
-        .filter(
-          ({ primaryKey, autoIncrement }) => !primaryKey && !autoIncrement, // 过滤掉主键
-        )
-        .map(({ comment, name, type }) => {
-          return {
-            comment,
-            name,
-            camelName: StringUtils.UNDERSCORE.convertToCamelCase(name),
-            type: type,
-            doType: ColumnTypeEnum[type].javaDOMapping,
-            voType: ColumnTypeEnum[type].javaVOMapping,
-          };
-        }),
-      columns: table.columns.map(({ comment, name, type }) => {
-        return {
-          comment,
-          name,
-          camelName: StringUtils.UNDERSCORE.convertToCamelCase(name),
-          type: type,
-          doType: ColumnTypeEnum[type].javaDOMapping,
-          voType: ColumnTypeEnum[type].javaVOMapping,
-        };
-      }),
+      ...classifyColumns(table.columns),
     };
     // 生成代码
     await generateCode(
@@ -110,6 +77,67 @@ const getTableNameWithoutModule = (tableName: string, moduleName?: string) => {
     return tableName.substring(moduleName.length + 1);
   }
   return tableName;
+};
+
+const classifyColumns = (columns: Table['columns']) => {
+  const processedColumns: AdvancedTableColumn[] = columns.map((column) => ({
+    ...column,
+    camelName: StringUtils.UNDERSCORE.convertToCamelCase(column.name),
+    pascalName: StringUtils.UNDERSCORE.convertToPascalCase(column.name),
+    upperName: column.name.toUpperCase(),
+    doType: ColumnTypeEnum[column.type].javaDOMapping,
+    voType: ColumnTypeEnum[column.type].javaVOMapping,
+  }));
+  // 公共字段
+  const baseColumns = processedColumns.filter(
+    (column) =>
+      column.createRequired &&
+      column.updateRequired &&
+      column.detailRespInclude,
+  );
+  // 取创建时独有的字段
+  const createRequiredColumns = processedColumns.filter(
+    (column) =>
+      column.createRequired && !baseColumns.some((c) => c.name === column.name),
+  );
+  // 取更新时独有的字段
+  const updateRequiredColumns = processedColumns.filter(
+    (column) =>
+      column.updateRequired && !baseColumns.some((c) => c.name === column.name),
+  );
+  // 取详情时独有的字段
+  const detailRespIncludeColumns = processedColumns.filter(
+    (column) =>
+      column.detailRespInclude &&
+      !baseColumns.some((c) => c.name === column.name),
+  );
+  // 取分页时时独有的字段
+  const pageItemRespIncludeColumns = processedColumns.filter(
+    (column) =>
+      column.pageItemRespInclude &&
+      !baseColumns.some((c) => c.name === column.name),
+  );
+  // 取分页查询条件的字段
+  const pageQueryColumns = processedColumns.filter(
+    (column) => column.pageQuery,
+  );
+  // 取 DO 字段
+  const doColumns = processedColumns.filter(
+    (column) =>
+      !['id', 'create_time', 'update_time', 'delete_time'].includes(
+        column.name,
+      ),
+  );
+
+  return {
+    baseColumns,
+    createRequiredColumns,
+    updateRequiredColumns,
+    detailRespIncludeColumns,
+    pageItemRespIncludeColumns,
+    pageQueryColumns,
+    doColumns,
+  };
 };
 
 // /**

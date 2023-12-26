@@ -12,7 +12,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class {{pascalTableName}}PageReqVO extends BasePageVO {
 
-    {{#each filterPrimaryKeyColumns}}
+    {{#each pageQueryColumns}}
     @Schema(description = "{{this.comment}}")
     private {{this.voType}} {{this.camelName}};
 

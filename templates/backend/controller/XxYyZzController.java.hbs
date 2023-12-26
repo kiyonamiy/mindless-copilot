@@ -7,6 +7,7 @@ import {{rootPackageName}}.{{convertPackageName}}.{{pascalTableName}}Convert;
 import {{rootPackageName}}.{{voPackageName}}.{{pascalTableName}}CreateReqVO;
 import {{rootPackageName}}.{{voPackageName}}.{{pascalTableName}}UpdateReqVO;
 import {{rootPackageName}}.{{voPackageName}}.{{pascalTableName}}PageReqVO;
+import {{rootPackageName}}.{{voPackageName}}.{{pascalTableName}}PageItemRespVO;
 import {{rootPackageName}}.{{voPackageName}}.{{pascalTableName}}RespVO;
 import {{rootPackageName}}.{{domainPackageName}}.dataobject.{{pascalTableName}}DO;
 import {{rootPackageName}}.{{servicePackageName}}.{{pascalTableName}}Service;
@@ -26,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 
-@Tag(name = "{{index}}-{{tableComment}}", description = "{{tableComment}}接口")
+@Tag(name = "{{tableNo}}-{{tableComment}}", description = "{{tableComment}}接口")
 @RestController
 @RequestMapping("{{apiPrefix}}")
 @Validated
@@ -68,9 +69,8 @@ public class {{pascalTableName}}Controller {
     @GetMapping("page")
     @Operation(summary = "分页查询{{tableComment}}")
     @PermissionCheck(code = "{{tableModule}}:{{camelTableName}}:get")
-    public Response<PageResult<{{pascalTableName}}RespVO>> get{{pascalTableName}}Page({{pascalTableName}}PageReqVO {{camelTableName}}PageReqVO) {
+    public Response<PageResult<{{pascalTableName}}PageItemRespVO>> get{{pascalTableName}}Page({{pascalTableName}}PageReqVO {{camelTableName}}PageReqVO) {
         PageResult<{{pascalTableName}}DO> {{camelTableName}}DOPageResult = {{camelTableName}}Service.get{{pascalTableName}}Page({{camelTableName}}PageReqVO);
-        return new Response<>(new PageResult<>({{pascalTableName}}Convert.INSTANCE.convertList({{camelTableName}}DOPageResult.getRecords()),
-            {{camelTableName}}DOPageResult.getTotal(), {{camelTableName}}DOPageResult.getSize(), {{camelTableName}}DOPageResult.getCurrent()));
+        return new Response<>({{pascalTableName}}Convert.INSTANCE.convert({{camelTableName}}DOPageResult));
     }
 }

@@ -2,6 +2,8 @@ package {{rootPackageName}}.{{servicePackageName}};
 
 import javax.annotation.Resource;
 
+import com.hyperchain.cb.domain.exception.BusinessException;
+import com.hyperchain.cb.domain.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 
 import {{rootPackageName}}.{{voPackageName}}.{{pascalTableName}}CreateReqVO;
@@ -13,6 +15,7 @@ import {{rootPackageName}}.{{convertPackageName}}.{{pascalTableName}}Convert;
 
 import {{rootPackageName}}.cb.common.page.dto.PageResult;
 
+import java.util.Objects;
 
 @Service
 public class {{pascalTableName}}ServiceImpl implements {{pascalTableName}}Service {
@@ -60,14 +63,47 @@ public class {{pascalTableName}}ServiceImpl implements {{pascalTableName}}Servic
     }
 
     private void checkCreate{{pascalTableName}} ({{pascalTableName}}CreateReqVO {{camelTableName}}CreateReqVO) {
-        // todo 编写创建检查逻辑
+        // todo 补充创建检查逻辑
+        {{#bothEach baseColumns createRequiredColumns}}
+        {{#notColumnNull this}}
+        {{#isVoString this}}
+        if (Objects.isNull({{../camelTableName}}CreateReqVO.get{{this.pascalName}}()) || {{../camelTableName}}CreateReqVO.get{{this.pascalName}}().trim().isEmpty()) {
+            throw new BusinessException(ErrorCode.{{../uppercaseTableName}}_{{this.upperName}}_EMPTY);
+            //  {{../uppercaseTableName}}_{{this.upperName}}_EMPTY({{../tableNo}}001, "{{this.comment}}不能为空"),
+        }
+        {{/isVoString}}
+        {{/notColumnNull}}
+        {{/bothEach}}
     }
 
-    private void checkUpdate{{pascalTableName}} ({{pascalTableName}}UpdateReqVO {{camelTableName}}UpdateReqVO) {
-        // todo 编写更新检查逻辑
+    private void checkUpdate{{pascalTableName}}({{pascalTableName}}UpdateReqVO {{camelTableName}}UpdateReqVO) {
+        // todo 补充更新检查逻辑
+        if (!does{{pascalTableName}}Exist({{camelTableName}}UpdateReqVO.getId())) {
+            throw new BusinessException(ErrorCode.{{uppercaseTableName}}_DOSE_NOT_EXIST);
+            //  {{uppercaseTableName}}_DOSE_NOT_EXIST({{tableNo}}001, "该{{tableComment}}不存在"),
+            // ========== {{tableComment}} {{tableNo}}000  ==========
+        }
+        {{#bothEach baseColumns updateRequiredColumns}}
+        {{#notColumnNull this}}
+        {{#isVoString this}}
+        if (Objects.isNull({{../camelTableName}}UpdateReqVO.get{{this.pascalName}}()) || {{../camelTableName}}UpdateReqVO.get{{this.pascalName}}().trim().isEmpty()) {
+            throw new BusinessException(ErrorCode.{{../uppercaseTableName}}_{{this.upperName}}_EMPTY);
+            //  {{../uppercaseTableName}}_{{this.upperName}}_EMPTY({{../tableNo}}001, "{{this.comment}}不能为空"),
+        }
+        {{/isVoString}}
+        {{/notColumnNull}}
+        {{/bothEach}}
     }
 
-    private void checkDelete{{pascalTableName}} (Long {{camelTableName}}Id) {
-        // todo 编写删除检查逻辑
+    private void checkDelete{{pascalTableName}}(Long {{camelTableName}}Id) {
+        // todo 补充删除检查逻辑
+        if (!does{{pascalTableName}}Exist({{camelTableName}}Id)) {
+            throw new BusinessException(ErrorCode.{{uppercaseTableName}}_DOSE_NOT_EXIST);
+        }
+    }
+
+    private boolean does{{pascalTableName}}Exist(Long id) {
+        {{pascalTableName}}DO {{camelTableName}}DO = {{camelTableName}}Mapper.selectById(id);
+        return Objects.nonNull({{camelTableName}}DO);
     }
 }

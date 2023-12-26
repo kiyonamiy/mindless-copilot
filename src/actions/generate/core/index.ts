@@ -4,8 +4,80 @@ import inquirer from 'inquirer';
 import path from 'path';
 
 import Logger from '@/log';
+import { AdvancedTableColumn, Table, TableColumn } from '@/types/table';
 
 const HBS_EXT = '.hbs';
+
+Handlebars.registerHelper(
+  'bothEach',
+  function (a: AdvancedTableColumn[], b: AdvancedTableColumn[], options) {
+    return [...a, ...b].map((item) => options.fn(item)).join('');
+  },
+);
+
+Handlebars.registerHelper(
+  'timeColumnsMapping',
+  function (columns: Table['columns'], options) {
+    return columns
+      .map((column) => {
+        // 过滤出只有时间类型的字段（这些字段需要做映射）
+        if (['DATETIME', 'TIMESTAMP', 'DATE'].includes(column.type)) {
+          return options.fn(column);
+        }
+      })
+      .join('');
+  },
+);
+
+Handlebars.registerHelper(
+  'containsTimeColumn',
+  function (columns: Table['columns'], options) {
+    const contains = columns.some((column) => {
+      if (['DATETIME', 'TIMESTAMP', 'DATE'].includes(column.type)) {
+        return true;
+      }
+    });
+    if (contains) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      return options.fn(this);
+    } else {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      return options.inverse(this);
+    }
+  },
+);
+
+Handlebars.registerHelper(
+  'notColumnNull',
+  function (column: TableColumn, options) {
+    if (column.notNull) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      return options.fn(this);
+    } else {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      return options.inverse(this);
+    }
+  },
+);
+
+Handlebars.registerHelper(
+  'isVoString',
+  function (column: AdvancedTableColumn, options) {
+    if (['String'].includes(column.voType)) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      return options.fn(this);
+    } else {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      return options.inverse(this);
+    }
+  },
+);
 
 /**
  * 组合数据和模板，生成代码，并将生成的代码写入到对应位置

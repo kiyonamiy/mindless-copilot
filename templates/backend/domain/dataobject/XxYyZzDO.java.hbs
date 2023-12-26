@@ -6,16 +6,16 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-{{#if filterPrimaryKeyTimeColumns}}
+{{#containsTimeColumn doColumns}}
 import java.time.LocalDateTime;
-{{/if}}
+{{/containsTimeColumn}}
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @TableName(value = "{{tableName}}", autoResultMap = true)
 public class {{pascalTableName}}DO extends BaseDO {
-    {{#each filterPrimaryKeyColumns}}
+    {{#each doColumns}}
     /**
      * {{this.comment}}
      */

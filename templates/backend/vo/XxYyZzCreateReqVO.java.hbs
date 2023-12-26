@@ -5,9 +5,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.NotNull;
+
 @Data
 @NoArgsConstructor
 @Schema(description = "{{tableComment}}-创建 Req VO")
 @EqualsAndHashCode(callSuper = true)
 public class {{pascalTableName}}CreateReqVO extends {{pascalTableName}}BaseVO {
+    {{#each createRequiredColumns}}
+    @Schema(description = "{{this.comment}}")
+    {{#notColumnNull this}}
+    @NotNull(message = "{{this.comment}}不能为空")
+    {{/notColumnNull}}
+    private {{this.voType}} {{this.camelName}};
+
+    {{/each}}
 }

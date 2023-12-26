@@ -11,8 +11,12 @@ import javax.validation.constraints.NotNull;
 @Schema(description = "{{tableComment}}-更新 Req VO")
 @EqualsAndHashCode(callSuper = true)
 public class {{pascalTableName}}UpdateReqVO extends {{pascalTableName}}BaseVO {
+    {{#each updateRequiredColumns}}
+    @Schema(description = "{{this.comment}}")
+    {{#notColumnNull this}}
+    @NotNull(message = "{{this.comment}}不能为空")
+    {{/notColumnNull}}
+    private {{this.voType}} {{this.camelName}};
 
-    @Schema(description = "{{tableComment}}ID")
-    @NotNull(message = "{{this.comment}}ID不能为空")
-    private Long id;
+    {{/each}}
 }

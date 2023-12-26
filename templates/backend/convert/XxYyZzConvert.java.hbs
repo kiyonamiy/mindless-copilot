@@ -1,57 +1,71 @@
 package {{rootPackageName}}.{{convertPackageName}};
 
+import com.hyperchain.cb.common.page.dto.PageResult;
 import {{rootPackageName}}.{{domainPackageName}}.dataobject.{{pascalTableName}}DO;
 import {{rootPackageName}}.{{voPackageName}}.{{pascalTableName}}CreateReqVO;
+import {{rootPackageName}}.{{voPackageName}}.{{pascalTableName}}PageItemRespVO;
 import {{rootPackageName}}.{{voPackageName}}.{{pascalTableName}}UpdateReqVO;
 import {{rootPackageName}}.{{voPackageName}}.{{pascalTableName}}RespVO;
 import {{rootPackageName}}.cb.convert.BaseConvert;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-{{#if filterPrimaryKeyTimeColumns}}
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
-{{/if}}
 
 import java.util.List;
+
+{{#timeColumnsMapping baseColumns}}
+  @Mapping(target = "{{camelName}}", source = "{{camelName}}", qualifiedByName = "epochMillisToDateTime"),
+{{/timeColumnsMapping}}
 
 @Mapper
 public interface {{pascalTableName}}Convert extends BaseConvert {
 
     {{pascalTableName}}Convert INSTANCE = Mappers.getMapper({{pascalTableName}}Convert.class);
 
-    {{#if filterPrimaryKeyTimeColumns}}
     @Mappings({
-    {{#each filterPrimaryKeyTimeColumns}}
-      @Mapping(target = "{{this.camelName}}", source = "{{this.camelName}}", qualifiedByName = "epochMillisToDateTime"),
-    {{/each}}
+      {{#timeColumnsMapping baseColumns}}
+        @Mapping(target = "{{camelName}}", source = "{{camelName}}", qualifiedByName = "epochMillisToDateTime"),
+      {{/timeColumnsMapping}}
+      {{#timeColumnsMapping createRequiredColumns}}
+        @Mapping(target = "{{camelName}}", source = "{{camelName}}", qualifiedByName = "epochMillisToDateTime"),
+      {{/timeColumnsMapping}}
     })
-    {{/if}}
     {{pascalTableName}}DO convert({{pascalTableName}}CreateReqVO bean);
 
-    {{#if filterPrimaryKeyTimeColumns}}
-      @Mappings({
-      {{#each filterPrimaryKeyTimeColumns}}
-        @Mapping(target = "{{this.camelName}}", source = "{{this.camelName}}", qualifiedByName = "epochMillisToDateTime"),
-      {{/each}}
-      })
-    {{/if}}
+    @Mappings({
+      {{#timeColumnsMapping baseColumns}}
+        @Mapping(target = "{{camelName}}", source = "{{camelName}}", qualifiedByName = "epochMillisToDateTime"),
+      {{/timeColumnsMapping}}
+      {{#timeColumnsMapping updateRequiredColumns}}
+        @Mapping(target = "{{camelName}}", source = "{{camelName}}", qualifiedByName = "epochMillisToDateTime"),
+      {{/timeColumnsMapping}}
+    })
     {{pascalTableName}}DO convert({{pascalTableName}}UpdateReqVO bean);
 
-    {{#if filterPrimaryKeyTimeColumns}}
-      @Mappings({
-      {{#each filterPrimaryKeyTimeColumns}}
-        @Mapping(target = "{{this.camelName}}", source = "{{this.camelName}}", qualifiedByName = "dateTimeToEpochMillis"),
-      {{/each}}
-      })
-    {{/if}}
+    @Mappings({
+      {{#timeColumnsMapping baseColumns}}
+        @Mapping(target = "{{camelName}}", source = "{{camelName}}", qualifiedByName = "dateTimeToEpochMillis"),
+      {{/timeColumnsMapping}}
+      {{#timeColumnsMapping detailRespIncludeColumns}}
+        @Mapping(target = "{{camelName}}", source = "{{camelName}}", qualifiedByName = "dateTimeToEpochMillis"),
+      {{/timeColumnsMapping}}
+    })
     {{pascalTableName}}RespVO convert({{pascalTableName}}DO bean);
+    List<{{pascalTableName}}RespVO> convert(List<{{pascalTableName}}DO> bean);
 
-    {{#if filterPrimaryKeyTimeColumns}}
-      @Mappings({
-      {{#each filterPrimaryKeyTimeColumns}}
-        @Mapping(target = "{{this.camelName}}", source = "{{this.camelName}}", qualifiedByName = "dateTimeToEpochMillis"),
-      {{/each}}
-      })
-    {{/if}}
-    List<{{pascalTableName}}RespVO> convertList(List<{{pascalTableName}}DO> bean);
+    @Mappings({
+      {{#timeColumnsMapping baseColumns}}
+        @Mapping(target = "{{camelName}}", source = "{{camelName}}", qualifiedByName = "dateTimeToEpochMillis"),
+      {{/timeColumnsMapping}}
+      {{#timeColumnsMapping pageItemRespIncludeColumns}}
+        @Mapping(target = "{{camelName}}", source = "{{camelName}}", qualifiedByName = "dateTimeToEpochMillis"),
+      {{/timeColumnsMapping}}
+    })
+    {{pascalTableName}}PageItemRespVO convert1({{pascalTableName}}DO bean);
+    List<{{pascalTableName}}PageItemRespVO> convert1(List<{{pascalTableName}}DO> bean);
+    default PageResult<{{pascalTableName}}PageItemRespVO> convert(PageResult<{{pascalTableName}}DO> items) {
+        return new PageResult<>({{pascalTableName}}Convert.INSTANCE.convert1(items.getRecords()),
+                items.getTotal(), items.getSize(), items.getCurrent());
+    }
 }
